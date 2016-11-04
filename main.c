@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
 #include <SDL2/SDL.h>
 
 #define GL3_PROTOTYPES 1
@@ -31,6 +34,7 @@ int init(){
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
     SDL_GL_SetSwapInterval(1);
 
@@ -65,23 +69,35 @@ int main(int argc, char** argv) {
     init();
 
     int running = 1;
+    uint64_t ticks = 0;
+
+    if(app_start()) {
+        return 1;
+    }
 
     while(running) {
         SDL_Event evt;
         while(SDL_PollEvent(&evt)) {
             if(evt.type == SDL_QUIT) {
                 running = 0;
+                break;
             }
 
-            if(update(evt)) {
+            if(update(evt, ticks)) {
                 running = 0;
+                break;
             }
-
-            if(draw(win, ctx)) {
-                running = 0;
-            }
+            ticks++;
         }
+
+        if(draw(win, ctx)) {
+            running = 0;
+        }
+
+        SDL_GL_SwapWindow(win);
     }
+
+    app_clean();
 
     cleanup();
     return 0;
