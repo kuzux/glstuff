@@ -11,9 +11,15 @@
 #include "app.h"
 
 float vertices[] = {
-    0.0f,  0.5f, // Vertex 1 (X, Y)
-    0.5f, -0.5f, // Vertex 2 (X, Y)
-    -0.5f, -0.5f // Vertex 3 (X, Y)
+    -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // Top-left
+     0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // Top-right
+     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // Bottom-right
+    -0.5f, -0.5f, 1.0f, 1.0f, 1.0f  // Bottom-left
+};
+
+GLuint elements[] = {
+    0,1,2,
+    2,3,0
 };
 
 int compile_shader(char* filename, GLenum type, GLuint* res) {
@@ -64,6 +70,12 @@ int app_start(){
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+    // init element buffer objects
+    GLuint ebo;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+
     // init shaders
     GLuint vShader, fShader;
 
@@ -88,7 +100,13 @@ int app_start(){
     // specify the shape of the vertex data
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
     glEnableVertexAttribArray(posAttrib);
-    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 
+        5*sizeof(float), 0);
+
+    GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
+    glEnableVertexAttribArray(colAttrib);
+    glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE,
+        5*sizeof(float), (void*)(2*sizeof(float)));
 
     return 0;
 }
@@ -107,7 +125,7 @@ int draw(SDL_Window* win, SDL_GLContext* ctx){
     glClear(GL_COLOR_BUFFER_BIT);
 
     // draw our triangle
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     return 0;
 }
