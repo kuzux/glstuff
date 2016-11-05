@@ -8,13 +8,17 @@
 #include <GL/gl.h>
 #endif
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #include "app.h"
 
 float vertices[] = {
-    -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // Top-left
-     0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // Top-right
-     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // Bottom-right
-    -0.5f, -0.5f, 1.0f, 1.0f, 1.0f  // Bottom-left
+    // posx posy color (r g b) texcoords (x y)
+    -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
+     0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
+     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
+    -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // Bottom-left
 };
 
 GLuint elements[] = {
@@ -52,7 +56,7 @@ int compile_shader(char* filename, GLenum type, GLuint* res) {
         return 1;
     }
 
-    //free(shader_buf);
+    free(shader_buf);
 
     *res = shader;
     return 0;
@@ -97,16 +101,46 @@ int app_start(){
     glLinkProgram(shaderProgram);
     glUseProgram(shaderProgram);
 
+    // init textures
+    GLuint tex;
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    int img_x, img_y, img_n;
+    uint8_t* img_data = stbi_load("tex.png", &img_x, &img_y, &img_n, 3);
+
+    if(!img_data) {
+        printf("texture loading error\n");
+        return 1;
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img_x, img_y, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data);
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    stbi_image_free(img_data);
+
     // specify the shape of the vertex data
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
     glEnableVertexAttribArray(posAttrib);
     glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 
-        5*sizeof(float), 0);
+        7*sizeof(float), 0);
 
     GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
     glEnableVertexAttribArray(colAttrib);
     glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE,
-        5*sizeof(float), (void*)(2*sizeof(float)));
+        7*sizeof(float), (void*)(2*sizeof(float)));
+
+    GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
+    glEnableVertexAttribArray(texAttrib);
+    glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE,
+        7*sizeof(float), (void*)(5*sizeof(float)));
 
     return 0;
 }
@@ -124,7 +158,7 @@ int draw(SDL_Window* win, SDL_GLContext* ctx){
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // draw our triangle
+    // draw our shape
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     return 0;
