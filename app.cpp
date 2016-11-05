@@ -17,6 +17,8 @@
 
 #include "app.h"
 
+#include "camera.h"
+
 float vertices[] = {
     // posx posy color (r g b) texcoords (x y)
     -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
@@ -33,8 +35,7 @@ GLuint elements[] = {
 GLuint shaderProgram;
 
 glm::mat4 model;
-glm::mat4 view;
-glm::mat4 proj;
+camera_t* cam;
 
 int compile_shader(char* filename, GLenum type, GLuint* res) {
     static char* shader_buf;
@@ -90,6 +91,11 @@ int app_start(){
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
+    cam = new_camera(
+        glm::vec3(1.2f, 1.2f, 1.2f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.0f, 0.0f, 1.0f));
+
     // init shaders
     GLuint vShader, fShader;
 
@@ -136,22 +142,10 @@ int app_start(){
 
     stbi_image_free(img_data);
 
-    // transform the model
-
     // rotate across Z axis
     model = glm::rotate(model, 
         glm::radians(120.0f), 
         glm::vec3(0.0f, 0.0f, 1.0f));
-
-    // set up the view matrix
-    view = glm::lookAt(
-        glm::vec3(1.2f, 1.2f, 1.2f),
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(0.0f, 0.0f, 1.0f)
-    );
-
-    // set up the projection matrix
-    proj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 10.0f);
 
     // specify the shape of the vertex data
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
@@ -173,11 +167,7 @@ int app_start(){
     GLint uniModel = glGetUniformLocation(shaderProgram, "model");
     glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
 
-    GLint uniView = glGetUniformLocation(shaderProgram, "view");
-    glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
-
-    GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
-    glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
+    camera_bind_shader(cam, shaderProgram);
 
     return 0;
 }
@@ -192,6 +182,10 @@ int update(SDL_Event evt, uint64_t ticks){
         ticks / 60.0f * glm::radians(180.0f), 
         glm::vec3(0.0f, 0.0f, 1.0f));
 
+    // reload the trans matrix
+    GLint uniModel = glGetUniformLocation(shaderProgram, "model");
+    glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
+
     return 0;
 }
 
@@ -199,10 +193,6 @@ int draw(SDL_Window* win, SDL_GLContext* ctx){
     // clear the screen
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-
-    // reload the trans matrix
-    GLint uniModel = glGetUniformLocation(shaderProgram, "model");
-    glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
 
     // draw our shape
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
