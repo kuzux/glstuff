@@ -77,7 +77,10 @@ int main(int argc, char** argv) {
 
     while(running) {
         SDL_Event evt;
+        int evt_count = 0;
         while(SDL_PollEvent(&evt)) {
+            evt_count++;
+            
             if(evt.type == SDL_QUIT) {
                 running = 0;
                 break;
@@ -87,7 +90,15 @@ int main(int argc, char** argv) {
                 running = 0;
                 break;
             }
-            ticks++;
+        }
+
+        if(!evt_count) {
+            SDL_Event none;
+            none.type = 0;
+
+            if(update(none, ticks)) {
+                running = 0;
+            }
         }
 
         if(draw(win, ctx)) {
@@ -95,6 +106,8 @@ int main(int argc, char** argv) {
         }
 
         SDL_GL_SwapWindow(win);
+
+        ticks++;
     }
 
     app_clean();
