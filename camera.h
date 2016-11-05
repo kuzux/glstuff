@@ -30,7 +30,7 @@ typedef struct {
 camera_t* new_camera(glm::vec3, glm::vec3, glm::vec3);
 void destroy_camera(camera_t*);
 void update_camera(camera_t*);
-void camera_bind_shader(camera_t*, GLuint);
+int camera_bind_shader(camera_t*, GLuint);
 
 #ifdef __cplusplus
 }

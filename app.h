@@ -13,6 +13,7 @@ extern "C" {
 
     int update(SDL_Event evt, uint64_t ticks);
     int draw(SDL_Window* win, SDL_GLContext* ctx);
+    
 #ifdef __cplusplus
 }
 #endif
