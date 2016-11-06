@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #ifdef __APPLE__
 #include <OpenGL/gl3.h>
@@ -65,6 +66,12 @@ int compile_shader(const char* filename, GLenum type, GLuint* res) {
     GLint status;
 
     f = fopen(filename, "r");
+
+    if(!f){
+        printf("Error opening file. errno %d\n", errno);
+        return 1;
+    }
+
     fseek(f, 0, SEEK_END);
     filelen = ftell(f);
     fseek(f, 0, SEEK_SET);

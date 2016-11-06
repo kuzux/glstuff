@@ -16,6 +16,7 @@
 
 #include <camera.h>
 #include <object.h>
+#include <objparse.h>
 
 object_t* obj;
 camera_t* cam;
@@ -57,6 +58,13 @@ int app_start(){
     }
 
     if(camera_bind_shader(cam, obj->shader)) {
+        return 1;
+    }
+
+    GLfloat* vertices;
+    GLuint* faces;
+
+    if(parse_file("resource/cube.obj", &vertices, &faces)) {
         return 1;
     }
 

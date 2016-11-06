@@ -10,12 +10,15 @@ all: $(BINS)
 .PHONY = all clean
 
 target/%.o: src/%.c
+	mkdir -p target
 	$(CC) $(CFLAGS) -c $< -o $@
 
 target/%.o: src/%.cpp
+	mkdir -p target
 	$(CPP) $(CFLAGS) -c $< -o $@
 
 target/main: $(OBJS)
+	mkdir -p target
 	$(CPP) $(CFLAGS) $(OBJS) -o $@ $(LIBS)
 
 clean:

@@ -11,7 +11,10 @@
 extern "C" {
 #endif
 
+#define DATAPT_PER_VERTEX 8
+
 void parse_string(const char**, int, GLfloat**, GLuint**);
+int parse_file(const char* filename, GLfloat**, GLuint**);
 
 #ifdef __cplusplus
 }
