@@ -19,16 +19,40 @@
 #include "object.h"
 
 float vertices[] = {
-    // posx posy color (r g b) texcoords (x y)
-    -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
-     0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
-     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
-    -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // Bottom-left
+    // coords color(rgb) texcoords(uv)
+    // x y z r g b u v
+
+    // bottom square
+    -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
+     0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
+     0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // Bottom-left
+
+    // top square
+    -0.5f,  0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
+     0.5f,  0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
+     0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
+    -0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // Bottom-left
 };
 
 GLuint elements[] = {
     0,1,2,
-    2,3,0
+    2,3,0,
+
+    4,5,6,
+    6,7,4,
+
+    4,0,3,
+    3,7,4,
+
+    5,1,2,
+    2,6,5,
+
+    3,2,6,
+    6,7,3,
+
+    0,1,5,
+    5,4,0
 };
 
 int compile_shader(const char* filename, GLenum type, GLuint* res) {
@@ -157,20 +181,20 @@ int bind_data_to_shaders(object_t* obj) {
     // specify the shape of the vertex data
     GLint posAttrib = glGetAttribLocation(obj->shader, "position");
     glEnableVertexAttribArray(posAttrib);
-    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 
-        7*sizeof(float), 0);
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 
+        8*sizeof(float), 0);
 
     GLint colAttrib = glGetAttribLocation(obj->shader, "color");
     glEnableVertexAttribArray(colAttrib);
     glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE,
-        7*sizeof(float), (void*)(2*sizeof(float)));
+        8*sizeof(float), (void*)(3*sizeof(float)));
 
     GLint texAttrib = glGetAttribLocation(obj->shader, "texcoord");
     glEnableVertexAttribArray(texAttrib);
     glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE,
-        7*sizeof(float), (void*)(5*sizeof(float)));
+        8*sizeof(float), (void*)(6*sizeof(float)));
 
-    // load the model matrix
+    // load the model transformation matrix
     GLint uniModel = glGetUniformLocation(obj->shader, "model");
     glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(obj->model));
 
@@ -200,7 +224,7 @@ void bind_buffers(object_t* obj) {
 }
 
 void object_draw(object_t* obj) {
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
 
 void destroy_object(object_t* obj) {

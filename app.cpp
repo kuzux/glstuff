@@ -21,6 +21,11 @@ object_t* obj;
 camera_t* cam;
 
 int app_start(){
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_GEQUAL, 1, 0xFF);
+    glStencilMask(0x00);
+
     obj = new_object();
     cam = new_camera(
         glm::vec3(1.2f, 1.2f, 1.2f),
@@ -70,7 +75,7 @@ int update(SDL_Event evt, uint64_t ticks){
 
 void clear_screen() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 int draw(SDL_Window* win, SDL_GLContext* ctx){
