@@ -12,10 +12,10 @@
 
 #include <SDL2/SDL.h>
 
-#include "app.h"
+#include <app.h>
 
-#include "camera.h"
-#include "object.h"
+#include <camera.h>
+#include <object.h>
 
 object_t* obj;
 camera_t* cam;
@@ -48,7 +48,7 @@ int app_start(){
         return 1;
     }
 
-    if(load_texture(obj, "tex.png")) { 
+    if(load_texture(obj, "resource/tex.png")) { 
         return 1;
     }
 

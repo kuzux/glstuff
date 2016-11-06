@@ -14,9 +14,9 @@
 #include <SDL2/SDL.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include <stb_image.h>
 
-#include "object.h"
+#include <object.h>
 
 float vertices[] = {
     // coords normals color(rgb) texcoords(uv)
@@ -116,12 +116,12 @@ object_t* new_object(){
 }
 
 int compile_shaders(object_t* obj) {
-    if(compile_shader("vertex.gl", GL_VERTEX_SHADER, &obj->vShader)) {
+    if(compile_shader("resource/vertex.gl", GL_VERTEX_SHADER, &obj->vShader)) {
         printf("vertex shader compile error\n");
         return 1;
     }
 
-    if(compile_shader("fragment.gl", GL_FRAGMENT_SHADER, &obj->fShader)) {
+    if(compile_shader("resource/fragment.gl", GL_FRAGMENT_SHADER, &obj->fShader)) {
         printf("fragment shader compile error\n");
         return 1;
     }

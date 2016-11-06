@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-#define FOV_DEGREES 45.0f
+#define FOV_DEGREES 90.0f
 #define MINDIST 1.0f
 #define MAXDIST 10.0f
 #define ASPECT 800.0f / 600.0f

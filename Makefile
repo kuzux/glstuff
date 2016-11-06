@@ -1,6 +1,6 @@
-BINS=main
-OBJS=main.o app.o camera.o object.o objparse.o
-CFLAGS=-O2 -g
+BINS=target/main
+OBJS=target/main.o target/app.o target/camera.o target/object.o target/objparse.o
+CFLAGS=-O2 -g -Iinclude
 CPP=g++
 CC=gcc
 LIBS=-framework OpenGL -lGLEW -lSDL2
@@ -9,14 +9,14 @@ all: $(BINS)
 
 .PHONY = all clean
 
-%.o: %.c
+target/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-%.o: %.cpp
+target/%.o: src/%.cpp
 	$(CPP) $(CFLAGS) -c $< -o $@
 
-main: $(OBJS)
+target/main: $(OBJS)
 	$(CPP) $(CFLAGS) $(OBJS) -o $@ $(LIBS)
 
 clean:
-	rm *.o main
+	rm target/*

@@ -10,7 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "camera.h"
+#include <camera.h>
 
 camera_t* new_camera(glm::vec3 pos, glm::vec3 lookAt, glm::vec3 up){
     camera_t* res = (camera_t*)malloc(sizeof(camera_t));

@@ -7,9 +7,9 @@
 #define GL3_PROTOTYPES 1
 #include <GL/glew.h>
 
-#include "app.h"
+#include <app.h>
 
-#include "conf.h"
+#include <conf.h>
 
 SDL_Window* win;
 SDL_GLContext* ctx;
