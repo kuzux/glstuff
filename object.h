@@ -32,12 +32,22 @@ typedef struct {
     
     // element buffer object
     GLuint ebo;
+
+    // represents the vertices of the object
+    // format: position normals color texcoords
+    // x y z x y z r g b u v
+    GLfloat* vertices;
+    int num_vertices;
+
+    // indexed faces
+    GLuint* faces;
+    int num_faces;
 } object_t;
 
 object_t* new_object();
 int compile_shaders(object_t*);
 int link_shaders(object_t*);
-int load_texture(object_t*);
+int load_texture(object_t*, const char*);
 int bind_data_to_shaders(object_t*);
 
 void object_update(object_t*, SDL_Event, uint64_t);

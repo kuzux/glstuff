@@ -48,7 +48,7 @@ int app_start(){
         return 1;
     }
 
-    if(load_texture(obj)) { 
+    if(load_texture(obj, "tex.png")) { 
         return 1;
     }
 

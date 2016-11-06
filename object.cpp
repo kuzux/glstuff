@@ -19,20 +19,20 @@
 #include "object.h"
 
 float vertices[] = {
-    // coords color(rgb) texcoords(uv)
-    // x y z r g b u v
+    // coords normals color(rgb) texcoords(uv)
+    // x y z  x y z  r g b  u v
 
     // bottom square
-    -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
-     0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
-     0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
-    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // Bottom-left
+    -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
+     0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
+     0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
+    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // Bottom-left
 
     // top square
-    -0.5f,  0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
-     0.5f,  0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
-     0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
-    -0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // Bottom-left
+    -0.5f,  0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
+     0.5f,  0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
+     0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
+    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // Bottom-left
 };
 
 GLuint elements[] = {
@@ -150,12 +150,12 @@ int link_shaders(object_t* obj) {
     return 0;
 }
 
-int load_texture(object_t* obj) {
+int load_texture(object_t* obj, const char* filename) {
     glGenTextures(1, &obj->tex);
     glBindTexture(GL_TEXTURE_2D, obj->tex);
 
     int img_x, img_y, img_n;
-    uint8_t* img_data = stbi_load("tex.png", &img_x, &img_y, &img_n, 3);
+    uint8_t* img_data = stbi_load(filename, &img_x, &img_y, &img_n, 3);
 
     if(!img_data) {
         printf("error loading data\n");
@@ -182,17 +182,21 @@ int bind_data_to_shaders(object_t* obj) {
     GLint posAttrib = glGetAttribLocation(obj->shader, "position");
     glEnableVertexAttribArray(posAttrib);
     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 
-        8*sizeof(float), 0);
+        11*sizeof(float), 0);
+
+    GLint normalAttrib = glGetAttribLocation(obj->shader, "normal");    
+    glVertexAttribPointer(normalAttrib, 3, GL_FLOAT, GL_FALSE,
+        11*sizeof(float), (void*)(3*sizeof(float)));
 
     GLint colAttrib = glGetAttribLocation(obj->shader, "color");
     glEnableVertexAttribArray(colAttrib);
     glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE,
-        8*sizeof(float), (void*)(3*sizeof(float)));
+        11*sizeof(float), (void*)(6*sizeof(float)));
 
     GLint texAttrib = glGetAttribLocation(obj->shader, "texcoord");
     glEnableVertexAttribArray(texAttrib);
     glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE,
-        8*sizeof(float), (void*)(6*sizeof(float)));
+        11*sizeof(float), (void*)(9*sizeof(float)));
 
     // load the model transformation matrix
     GLint uniModel = glGetUniformLocation(obj->shader, "model");

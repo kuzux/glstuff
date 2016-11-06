@@ -1,5 +1,5 @@
 BINS=main
-OBJS=main.o app.o camera.o object.o
+OBJS=main.o app.o camera.o object.o objparse.o
 CFLAGS=-O2 -g
 CPP=g++
 CC=gcc
