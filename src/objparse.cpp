@@ -152,13 +152,25 @@ int parse_obj_lines(char** lines, int num_lines, obj_file_t* res) {
             }
 
             res->texture_file = word;
+        } else if(strcmp(word, "mtllib") == 0) {
+            *(word+6)=' ';
+
+            word = strtok(NULL, " ");
+
+            // chomp the last character
+            int len = strlen(word) - 1;
+            if(word[len]=='\n') {
+                word[len]='\0';
+            }
+
+            res->mtl_file = word;
         } else {
             // ignore
         }
     }
 
     if(res) {
-        res->vertices = (GLfloat*)malloc(DATAPT_PER_VERTEX*res->num_vertices*sizeof(GLfloat));
+        res->vertices = (float*)malloc(DATAPT_PER_VERTEX*res->num_vertices*sizeof(float));
 
         if(!res->vertices){
             return 1;
@@ -168,7 +180,7 @@ int parse_obj_lines(char** lines, int num_lines, obj_file_t* res) {
     }
 
     if(res) {
-        res->faces = (GLuint*)malloc(res->num_faces*sizeof(GLuint));
+        res->faces = (unsigned int*)malloc(res->num_faces*sizeof(unsigned int));
 
         if(!res->faces){
             return 1;
@@ -315,6 +327,9 @@ int parse_obj_file(obj_file_t* obj) {
 obj_file_t* make_obj_file(const char* filename){
     obj_file_t* res = (obj_file_t*)malloc(sizeof(obj_file_t));
     res->filename = filename;
+
+    res->texture_file = NULL;
+    res->mtl_file = NULL;
 
     return res;
 }

@@ -1,6 +1,6 @@
 # Blender3D v249 OBJ File: untitled.blend
 # www.blender3d.org
-mtllib cube.mtl
+mtllib resource/cube.mtl
 v 1.000000 -1.000000 -1.000000
 v 1.000000 -1.000000 1.000000
 v -1.000000 -1.000000 1.000000

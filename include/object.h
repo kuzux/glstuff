@@ -49,7 +49,7 @@ typedef struct {
     int num_faces;
 } object_t;
 
-object_t* new_object();
+object_t* make_object();
 int init_from_obj_file(object_t*, obj_file_t*);
 
 int compile_shaders(object_t*);
@@ -62,7 +62,7 @@ void object_update(object_t*, SDL_Event, uint64_t);
 void bind_buffers(object_t*);
 void object_draw(object_t*);
 
-void destroy_object(object_t*);
+void delete_object(object_t*);
 
 #ifdef __cplusplus
 }

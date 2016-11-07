@@ -27,8 +27,8 @@ typedef struct {
     glm::mat4 proj;
 } camera_t;
 
-camera_t* new_camera(glm::vec3, glm::vec3, glm::vec3);
-void destroy_camera(camera_t*);
+camera_t* make_camera(glm::vec3, glm::vec3, glm::vec3);
+void delete_camera(camera_t*);
 void update_camera(camera_t*);
 int camera_bind_shader(camera_t*, GLuint);
 

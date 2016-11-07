@@ -84,7 +84,7 @@ int init_buffers(object_t* obj) {
     return 0;
 }
 
-object_t* new_object(){
+object_t* make_object(){
     object_t* res = (object_t*)malloc(sizeof(object_t));
 
     if(!res){
@@ -131,8 +131,10 @@ int init_from_obj_file(object_t* obj, obj_file_t* objfile) {
         return 1;
     }
 
-    if(load_texture(obj, objfile->texture_file)) { 
-        return 1;
+    if(objfile->texture_file) {
+        if(load_texture(obj, objfile->texture_file)) { 
+            return 1;
+        }
     }
 
     if(bind_data_to_shaders(obj)) {
@@ -257,6 +259,6 @@ void object_draw(object_t* obj) {
     glDrawElements(GL_TRIANGLES, obj->num_faces, GL_UNSIGNED_INT, 0);
 }
 
-void destroy_object(object_t* obj) {
+void delete_object(object_t* obj) {
     free(obj);
 }

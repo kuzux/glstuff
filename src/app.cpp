@@ -27,8 +27,8 @@ int app_start(){
     glStencilFunc(GL_GEQUAL, 1, 0xFF);
     glStencilMask(0x00);
 
-    obj = new_object();
-    cam = new_camera(
+    obj = make_object();
+    cam = make_camera(
         glm::vec3(2.2f, 2.2f, 2.2f),
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.0f, 0.0f, 1.0f));

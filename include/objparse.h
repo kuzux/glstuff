@@ -1,12 +1,6 @@
 #ifndef _OBJPARSE_H
 #define _OBJPARSE_H
 
-#ifdef __APPLE__
-#include <OpenGL/gl3.h>
-#else
-#include <GL/gl.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -17,13 +11,15 @@ typedef struct {
     const char* filename;
 
     const char* texture_file;
+    const char* mtl_file;
+    
     const char* vertex_shader;
     const char* fragment_shader;
 
-    GLfloat* vertices;
+    float* vertices;
     int num_vertices;
 
-    GLuint* faces;
+    unsigned int* faces;
     int num_faces;
 } obj_file_t;
 
