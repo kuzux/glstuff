@@ -16,17 +16,16 @@ void parse_face(char* word, int* vi, int* vti, int* vni) {
     *vi = atoi(num)-1;
 
     num = strtok(NULL, "/");
+    *(num-1) = '/';
     *vti = atoi(num)-1;
 
     num = strtok(NULL, "/");
+    *(num-1) = '/';
     *vni = atoi(num)-1;
 }
 
-void parse_string(char** lines, int num_lines, GLfloat** vertices, GLuint** faces) {
+int parse_obj_lines(char** lines, int num_lines, obj_file_t* res) {
     // find the number of vertices and faces we'll need
-    int num_vertices = 0;
-    int num_faces = 0;
-
     std::map<char*, int> faceIndices;
 
     std::map<int, int> posIndices;
@@ -50,15 +49,15 @@ void parse_string(char** lines, int num_lines, GLfloat** vertices, GLuint** face
             nextword = word + strlen(word) + 1;
 
             if(faceIndices.find(word)==faceIndices.end()){
-                faceIndices[word] = num_vertices;
+                faceIndices[word] = res->num_vertices;
 
                 parse_face(word, &vi, &vti, &vni);
 
-                posIndices[num_vertices] = vi;
-                normalIndices[num_vertices] = vni;
-                texcoordIndices[num_vertices] = vti;
+                posIndices[res->num_vertices] = vi;
+                normalIndices[res->num_vertices] = vni;
+                texcoordIndices[res->num_vertices] = vti;
 
-                num_vertices++;
+                res->num_vertices++;
             }
 
             word = strtok(nextword, " ");
@@ -66,32 +65,32 @@ void parse_string(char** lines, int num_lines, GLfloat** vertices, GLuint** face
             nextword = word + strlen(word) + 1;
 
             if(faceIndices.find(word)==faceIndices.end()){
-                faceIndices[word] = num_vertices;
+                faceIndices[word] = res->num_vertices;
 
                 parse_face(word, &vi, &vti, &vni);
 
-                posIndices[num_vertices] = vi;
-                normalIndices[num_vertices] = vni;
-                texcoordIndices[num_vertices] = vti;
+                posIndices[res->num_vertices] = vi;
+                normalIndices[res->num_vertices] = vni;
+                texcoordIndices[res->num_vertices] = vti;
 
-                num_vertices++;
+                res->num_vertices++;
             }
 
             word = strtok(nextword, " ");
             *(word-1) = ' ';
             if(faceIndices.find(word)==faceIndices.end()){
-                faceIndices[word] = num_vertices;
+                faceIndices[word] = res->num_vertices;
 
                 parse_face(word, &vi, &vti, &vni);
 
-                posIndices[num_vertices] = vi;
-                normalIndices[num_vertices] = vni;
-                texcoordIndices[num_vertices] = vti;
+                posIndices[res->num_vertices] = vi;
+                normalIndices[res->num_vertices] = vni;
+                texcoordIndices[res->num_vertices] = vti;
 
-                num_vertices++;
+                res->num_vertices++;
             }
 
-            num_faces += 3;
+            res->num_faces += 3;
         } else if(strcmp(word, "v") == 0) {
             *(word+1)=' ';
 
@@ -104,22 +103,58 @@ void parse_string(char** lines, int num_lines, GLfloat** vertices, GLuint** face
             *(word+2)=' ';
 
             num_vn++;
+        } else if(strcmp(word, "usemtl") == 0) {
+            *(word+6)=' ';
+
+            word = strtok(NULL, " ");
+
+            // chomp the last character
+            int len = strlen(word) - 1;
+            if(word[len]=='\n') {
+                word[len]='\0';
+            }
+
+            res->texture_file = word;
         } else {
             // ignore
         }
     }
 
-    if(vertices) {
-        *vertices = (GLfloat*)malloc(DATAPT_PER_VERTEX*num_vertices*sizeof(GLfloat));
+    if(res) {
+        res->vertices = (GLfloat*)malloc(DATAPT_PER_VERTEX*res->num_vertices*sizeof(GLfloat));
+
+        if(!res->vertices){
+            return 1;
+        }
+    } else {
+        return 1;
     }
 
-    if(faces) {
-        *faces = (GLuint*)malloc(num_vertices*sizeof(GLuint));
+    if(res) {
+        res->faces = (GLuint*)malloc(res->num_faces*sizeof(GLuint));
+
+        if(!res->faces){
+            return 1;
+        }
+    } else {
+        return 1;
     }
 
     glm::vec3* v = (glm::vec3*)malloc(num_v*sizeof(glm::vec3));
     glm::vec2* vt = (glm::vec2*)malloc(num_vt*sizeof(glm::vec2));
     glm::vec3* vn = (glm::vec3*)malloc(num_vn*sizeof(glm::vec3));
+
+    if(!v) {
+        return 1;
+    }
+
+    if(!vt) {
+        return 1;
+    }
+
+    if(!vn) {
+        return 1;
+    }
 
     int v_i = 0;
     int vt_i = 0;
@@ -129,13 +164,13 @@ void parse_string(char** lines, int num_lines, GLfloat** vertices, GLuint** face
         char* word = strtok((char*)lines[i], " ");
         if(strcmp(word, "f") == 0) {
             word = strtok(NULL, " ");
-            (*faces)[3*i] = faceIndices[word];
+            res->faces[3*i] = faceIndices[word];
             
             word = strtok(NULL, " ");
-            (*faces)[3*i+1] = faceIndices[word];
+            res->faces[3*i+1] = faceIndices[word];
 
             word = strtok(NULL, " ");
-            (*faces)[3*i+2] = faceIndices[word];
+            res->faces[3*i+2] = faceIndices[word];
         } else if(strcmp(word, "v") == 0) {
             word = strtok(NULL, " ");
             v[v_i].x = atof(word);
@@ -171,28 +206,30 @@ void parse_string(char** lines, int num_lines, GLfloat** vertices, GLuint** face
         }
     }
 
-
-    for(int i=0; i<num_vertices; i++) {
+    for(int i=0; i<res->num_vertices; i++) {
         int base = i*DATAPT_PER_VERTEX;
-        (*vertices)[base] = v[posIndices[i]].x;
-        (*vertices)[base+1] = v[posIndices[i]].y;
-        (*vertices)[base+2] = v[posIndices[i]].z;
 
-        (*vertices)[base+3] = vn[normalIndices[i]].x;
-        (*vertices)[base+4] = vn[normalIndices[i]].y;
-        (*vertices)[base+5] = vn[normalIndices[i]].z;
+        res->vertices[base] = v[posIndices[i]].x;
+        res->vertices[base+1] = v[posIndices[i]].y;
+        res->vertices[base+2] = v[posIndices[i]].z;
 
-        (*vertices)[base+6] = vt[texcoordIndices[i]].x;
-        (*vertices)[base+7] = vt[texcoordIndices[i]].y;
+        res->vertices[base+3] = vn[normalIndices[i]].x;
+        res->vertices[base+4] = vn[normalIndices[i]].y;
+        res->vertices[base+5] = vn[normalIndices[i]].z;
+
+        res->vertices[base+6] = vt[texcoordIndices[i]].x;
+        res->vertices[base+7] = vt[texcoordIndices[i]].y;
     }
 
     free(v);
     free(vt);
     free(vn);
+
+    return 0;
 }
 
-int parse_file(const char* filename, GLfloat** vertices, GLuint** faces) {
-    FILE* f = fopen(filename, "r");
+int parse_obj_file(obj_file_t* obj) {
+    FILE* f = fopen(obj->filename, "r");
 
     if(!f) {
         printf("Error opening file. errno %d\n", errno);
@@ -220,11 +257,26 @@ int parse_file(const char* filename, GLfloat** vertices, GLuint** faces) {
         }
     }
 
-    parse_string(lines, num_lines, vertices, faces);
+    fclose(f);
+
+    if(parse_obj_lines(lines, num_lines, obj)) {
+        return 1;
+    }
 
     for(int i=0;i<num_lines;i++){
         free(lines[i]);
     }
 
     return 0;
+}
+
+obj_file_t* make_obj_file(const char* filename){
+    obj_file_t* res = (obj_file_t*)malloc(sizeof(obj_file_t));
+    res->filename = filename;
+
+    return res;
+}
+
+void delete_obj_file(obj_file_t* obj){
+    free(obj);
 }

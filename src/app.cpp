@@ -41,19 +41,13 @@ int app_start(){
         return 1;
     }
 
-    if(compile_shaders(obj)) {
-        return 1;
-    }
-    
-    if(link_shaders(obj)) {
+    obj_file_t* objfile = make_obj_file("resource/cube.obj");
+
+    if(parse_obj_file(objfile)) {
         return 1;
     }
 
-    if(load_texture(obj, "resource/tex.png")) { 
-        return 1;
-    }
-
-    if(bind_data_to_shaders(obj)) {
+    if(init_from_obj_file(obj, objfile)) {
         return 1;
     }
 
@@ -61,12 +55,7 @@ int app_start(){
         return 1;
     }
 
-    GLfloat* vertices;
-    GLuint* faces;
-
-    if(parse_file("resource/cube.obj", &vertices, &faces)) {
-        return 1;
-    }
+    delete_obj_file(objfile);
 
     return 0;
 }

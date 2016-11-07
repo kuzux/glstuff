@@ -13,8 +13,26 @@ extern "C" {
 
 #define DATAPT_PER_VERTEX 8
 
-void parse_string(const char**, int, GLfloat**, GLuint**);
-int parse_file(const char* filename, GLfloat**, GLuint**);
+typedef struct {
+    const char* filename;
+
+    const char* texture_file;
+    const char* vertex_shader;
+    const char* fragment_shader;
+
+    GLfloat* vertices;
+    int num_vertices;
+
+    GLuint* faces;
+    int num_faces;
+} obj_file_t;
+
+obj_file_t* make_obj_file(const char*);
+
+void parse_obj_lines(const char**, int, obj_file_t*);
+int parse_obj_file(obj_file_t*);
+
+void delete_obj_file(obj_file_t*);
 
 #ifdef __cplusplus
 }

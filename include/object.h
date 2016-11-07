@@ -9,9 +9,14 @@
 
 #include <glm/glm.hpp>
 
+#include <objparse.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define MAX_VERTICES 10000
+#define MAX_FACES 50000
 
 typedef struct {
     GLuint shader;
@@ -34,8 +39,8 @@ typedef struct {
     GLuint ebo;
 
     // represents the vertices of the object
-    // format: position normals color texcoords
-    // x y z x y z r g b u v
+    // format: position normals texcoords
+    // x y z x y z u v
     GLfloat* vertices;
     int num_vertices;
 
@@ -45,6 +50,8 @@ typedef struct {
 } object_t;
 
 object_t* new_object();
+int init_from_obj_file(object_t*, obj_file_t*);
+
 int compile_shaders(object_t*);
 int link_shaders(object_t*);
 int load_texture(object_t*, const char*);

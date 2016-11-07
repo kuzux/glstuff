@@ -19,43 +19,6 @@
 
 #include <object.h>
 
-float vertices[] = {
-    // coords normals color(rgb) texcoords(uv)
-    // x y z  x y z  r g b  u v
-
-    // bottom square
-    -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
-     0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
-     0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
-    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // Bottom-left
-
-    // top square
-    -0.5f,  0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
-     0.5f,  0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
-     0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
-    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // Bottom-left
-};
-
-GLuint elements[] = {
-    0,1,2,
-    2,3,0,
-
-    4,5,6,
-    6,7,4,
-
-    4,0,3,
-    3,7,4,
-
-    5,1,2,
-    2,6,5,
-
-    3,2,6,
-    6,7,3,
-
-    0,1,5,
-    5,4,0
-};
-
 int compile_shader(const char* filename, GLenum type, GLuint* res) {
     static char* shader_buf;
     static char error_buf[512];
@@ -68,7 +31,7 @@ int compile_shader(const char* filename, GLenum type, GLuint* res) {
     f = fopen(filename, "r");
 
     if(!f){
-        printf("Error opening file. errno %d\n", errno);
+        printf("Error opening shader file. errno %d\n", errno);
         return 1;
     }
 
@@ -76,6 +39,11 @@ int compile_shader(const char* filename, GLenum type, GLuint* res) {
     filelen = ftell(f);
     fseek(f, 0, SEEK_SET);
     shader_buf = (char*)malloc(filelen+1);
+    
+    if(!shader_buf) {
+        return 1;
+    }
+
     fread(shader_buf, 1, filelen, f);
     shader_buf[filelen] = 0;
     fclose(f);
@@ -98,6 +66,24 @@ int compile_shader(const char* filename, GLenum type, GLuint* res) {
     return 0;
 }
 
+int init_buffers(object_t* obj) {
+    // init array objects
+    glGenVertexArrays(1, &obj->vao);
+    glBindVertexArray(obj->vao);
+
+    // init buffers
+    glGenBuffers(1, &obj->vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(obj->vertices), obj->vertices, GL_STATIC_DRAW);
+
+    // init element buffer objects
+    glGenBuffers(1, &obj->ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj->ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(obj->faces), obj->faces, GL_STATIC_DRAW);
+
+    return 0;
+}
+
 object_t* new_object(){
     object_t* res = (object_t*)malloc(sizeof(object_t));
 
@@ -105,21 +91,68 @@ object_t* new_object(){
         return NULL;
     }
 
-    // init array objects
-    glGenVertexArrays(1, &res->vao);
-    glBindVertexArray(res->vao);
-
-    // init buffers
-    glGenBuffers(1, &res->vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, res->vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // init element buffer objects
-    glGenBuffers(1, &res->ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, res->ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+    
 
     return res;
+}
+
+int init_from_obj_file(object_t* obj, obj_file_t* objfile) {
+    if(!obj) {
+        return 1;
+    }
+
+    if(!objfile) {
+        return 1;
+    }
+
+    if(objfile->num_vertices > MAX_VERTICES) {
+        printf("Too many vertices\n");
+        return 1;
+    }
+
+    if(objfile->num_vertices > MAX_VERTICES) {
+        printf("Too many faces\n");
+        return 1;
+    }
+
+    obj->vertices = objfile->vertices;
+    obj->num_vertices = objfile->num_vertices * DATAPT_PER_VERTEX;
+
+    obj->faces = objfile->faces;
+    obj->num_faces = objfile->num_faces;
+
+    if(init_buffers(obj)) {
+        return 1;
+    }
+
+    if(compile_shaders(obj)) {
+        return 1;
+    }
+    
+    if(link_shaders(obj)) {
+        return 1;
+    }
+
+    if(load_texture(obj, objfile->texture_file)) { 
+        return 1;
+    }
+
+    if(bind_data_to_shaders(obj)) {
+        return 1;
+    }
+
+    printf("%d %d\n", obj->num_vertices, obj->num_faces);
+
+    for(int i=0;i<obj->num_vertices;i++) {
+        printf("%f ", obj->vertices[i]);
+        if(i%8 == 7) printf("\n");
+    }
+
+    for(int i=0;i<obj->num_faces;i++) {
+        printf("%d\n", obj->faces[i]);
+    }
+
+    return 0;
 }
 
 int compile_shaders(object_t* obj) {
@@ -137,6 +170,8 @@ int compile_shaders(object_t* obj) {
 }
 
 int link_shaders(object_t* obj) {
+    char error_buf[512];
+
     obj->shader = glCreateProgram();
     glAttachShader(obj->shader, obj->vShader);
     glAttachShader(obj->shader, obj->fShader);
@@ -148,7 +183,9 @@ int link_shaders(object_t* obj) {
     GLint status;
     glGetShaderiv(obj->shader, GL_LINK_STATUS, &status);
     if(status != GL_TRUE) {
-        printf("shader link error\n");
+        glGetShaderInfoLog(obj->shader, 512, NULL, error_buf);
+
+        printf("shader link error%s\n", error_buf);
         return 1;
     }
 
@@ -165,7 +202,7 @@ int load_texture(object_t* obj, const char* filename) {
     uint8_t* img_data = stbi_load(filename, &img_x, &img_y, &img_n, 3);
 
     if(!img_data) {
-        printf("error loading data\n");
+        printf("error loading texture data\n");
         return 1;
     }
 
@@ -189,21 +226,16 @@ int bind_data_to_shaders(object_t* obj) {
     GLint posAttrib = glGetAttribLocation(obj->shader, "position");
     glEnableVertexAttribArray(posAttrib);
     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 
-        11*sizeof(float), 0);
+        8*sizeof(float), 0);
 
     GLint normalAttrib = glGetAttribLocation(obj->shader, "normal");    
     glVertexAttribPointer(normalAttrib, 3, GL_FLOAT, GL_FALSE,
-        11*sizeof(float), (void*)(3*sizeof(float)));
-
-    GLint colAttrib = glGetAttribLocation(obj->shader, "color");
-    glEnableVertexAttribArray(colAttrib);
-    glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE,
-        11*sizeof(float), (void*)(6*sizeof(float)));
+        8*sizeof(float), (void*)(3*sizeof(float)));
 
     GLint texAttrib = glGetAttribLocation(obj->shader, "texcoord");
     glEnableVertexAttribArray(texAttrib);
     glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE,
-        11*sizeof(float), (void*)(9*sizeof(float)));
+        8*sizeof(float), (void*)(6*sizeof(float)));
 
     // load the model transformation matrix
     GLint uniModel = glGetUniformLocation(obj->shader, "model");
@@ -235,7 +267,7 @@ void bind_buffers(object_t* obj) {
 }
 
 void object_draw(object_t* obj) {
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, obj->num_faces, GL_UNSIGNED_INT, 0);
 }
 
 void destroy_object(object_t* obj) {
