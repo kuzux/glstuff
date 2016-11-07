@@ -29,7 +29,7 @@ int app_start(){
 
     obj = new_object();
     cam = new_camera(
-        glm::vec3(1.2f, 1.2f, 1.2f),
+        glm::vec3(2.2f, 2.2f, 2.2f),
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.0f, 0.0f, 1.0f));
 

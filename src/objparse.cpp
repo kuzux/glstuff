@@ -5,6 +5,7 @@
 #include <errno.h>
 
 #include <map>
+#include <string>
 
 #include <glm/glm.hpp>
 
@@ -26,7 +27,7 @@ void parse_face(char* word, int* vi, int* vti, int* vni) {
 
 int parse_obj_lines(char** lines, int num_lines, obj_file_t* res) {
     // find the number of vertices and faces we'll need
-    std::map<char*, int> faceIndices;
+    std::map<std::string, int> faceIndices;
 
     std::map<int, int> posIndices;
     std::map<int, int> normalIndices;
@@ -36,20 +37,30 @@ int parse_obj_lines(char** lines, int num_lines, obj_file_t* res) {
     int num_vt = 0;
     int num_vn = 0;
 
+    res->num_vertices = 0;
+    res->num_faces = 0;
+
     for(int i=0; i<num_lines; i++) {
         char* word = strtok((char*)lines[i], " ");
 
         if(strcmp(word, "f") == 0) {
             int vi, vti, vni;
 
+            int chomped = 0;
+
             word = strtok(NULL, " ");
             *(word-1) = ' ';
             
+            if(word[strlen(word)-1] == '\n') {
+                word[strlen(word)-1] = '\0';
+                chomped = 1;
+            }
+
             char* nextword;
             nextword = word + strlen(word) + 1;
 
-            if(faceIndices.find(word)==faceIndices.end()){
-                faceIndices[word] = res->num_vertices;
+            if(!faceIndices.count(std::string(word))){
+                faceIndices[std::string(word)] = res->num_vertices;
 
                 parse_face(word, &vi, &vti, &vni);
 
@@ -58,14 +69,24 @@ int parse_obj_lines(char** lines, int num_lines, obj_file_t* res) {
                 texcoordIndices[res->num_vertices] = vti;
 
                 res->num_vertices++;
+            }
+
+            if(chomped) {
+                word[strlen(word)] = '\n';
+                chomped = 0;
             }
 
             word = strtok(nextword, " ");
             *(word-1) = ' ';
             nextword = word + strlen(word) + 1;
 
-            if(faceIndices.find(word)==faceIndices.end()){
-                faceIndices[word] = res->num_vertices;
+            if(word[strlen(word)-1] == '\n') {
+                word[strlen(word)-1] = '\0';
+                chomped = 1;
+            }
+
+            if(!faceIndices.count(std::string(word))){
+                faceIndices[std::string(word)] = res->num_vertices;
 
                 parse_face(word, &vi, &vti, &vni);
 
@@ -76,10 +97,21 @@ int parse_obj_lines(char** lines, int num_lines, obj_file_t* res) {
                 res->num_vertices++;
             }
 
+            if(chomped) {
+                word[strlen(word)] = '\n';
+                chomped = 0;
+            }
+
             word = strtok(nextword, " ");
             *(word-1) = ' ';
-            if(faceIndices.find(word)==faceIndices.end()){
-                faceIndices[word] = res->num_vertices;
+
+            if(word[strlen(word)-1] == '\n') {
+                word[strlen(word)-1] = '\0';
+                chomped = 1;
+            }
+
+            if(!faceIndices.count(std::string(word))){
+                faceIndices[std::string(word)] = res->num_vertices;
 
                 parse_face(word, &vi, &vti, &vni);
 
@@ -88,6 +120,11 @@ int parse_obj_lines(char** lines, int num_lines, obj_file_t* res) {
                 texcoordIndices[res->num_vertices] = vti;
 
                 res->num_vertices++;
+            }
+
+            if(chomped) {
+                word[strlen(word)] = '\n';
+                chomped = 0;
             }
 
             res->num_faces += 3;
@@ -160,17 +197,22 @@ int parse_obj_lines(char** lines, int num_lines, obj_file_t* res) {
     int vt_i = 0;
     int vn_i = 0;
 
+    int f_i = 0;
+
     for(int i=0; i<num_lines; i++) {
         char* word = strtok((char*)lines[i], " ");
         if(strcmp(word, "f") == 0) {
             word = strtok(NULL, " ");
-            res->faces[3*i] = faceIndices[word];
+            res->faces[3*f_i] = faceIndices[std::string(word)];
             
             word = strtok(NULL, " ");
-            res->faces[3*i+1] = faceIndices[word];
+            res->faces[3*f_i+1] = faceIndices[std::string(word)];
 
             word = strtok(NULL, " ");
-            res->faces[3*i+2] = faceIndices[word];
+            word[strlen(word)-1] = '\0';
+            res->faces[3*f_i+2] = faceIndices[std::string(word)];
+
+            f_i++;
         } else if(strcmp(word, "v") == 0) {
             word = strtok(NULL, " ");
             v[v_i].x = atof(word);

@@ -74,12 +74,12 @@ int init_buffers(object_t* obj) {
     // init buffers
     glGenBuffers(1, &obj->vbo);
     glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(obj->vertices), obj->vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, obj->num_vertices*sizeof(GLfloat), obj->vertices, GL_STATIC_DRAW);
 
     // init element buffer objects
     glGenBuffers(1, &obj->ebo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj->ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(obj->faces), obj->faces, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, obj->num_faces*sizeof(GLuint), obj->faces, GL_STATIC_DRAW);
 
     return 0;
 }
@@ -90,8 +90,6 @@ object_t* new_object(){
     if(!res){
         return NULL;
     }
-
-    
 
     return res;
 }
@@ -139,17 +137,6 @@ int init_from_obj_file(object_t* obj, obj_file_t* objfile) {
 
     if(bind_data_to_shaders(obj)) {
         return 1;
-    }
-
-    printf("%d %d\n", obj->num_vertices, obj->num_faces);
-
-    for(int i=0;i<obj->num_vertices;i++) {
-        printf("%f ", obj->vertices[i]);
-        if(i%8 == 7) printf("\n");
-    }
-
-    for(int i=0;i<obj->num_faces;i++) {
-        printf("%d\n", obj->faces[i]);
     }
 
     return 0;
