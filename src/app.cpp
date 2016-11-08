@@ -30,7 +30,8 @@ int app_start(){
     glStencilFunc(GL_GEQUAL, 1, 0xFF);
     glStencilMask(0x00);
 
-    vec3f_t zeros = { 0.0f, 0.0f, 0.0f };
+    vec3f_t lightpos = { 2.0f, 2.0f, 10.0f };
+    vec3f_t lightcolor = { 1.0f, 1.0f, 1.0f };
 
     obj = make_object();
     cam = make_camera(
@@ -38,7 +39,7 @@ int app_start(){
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.0f, 0.0f, 1.0f));
 
-    light = make_light(zeros, zeros);
+    light = make_light(lightpos, lightcolor, 60.0);
 
     if(!obj) {
         return 1;

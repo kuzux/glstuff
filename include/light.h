@@ -12,9 +12,10 @@ typedef struct { float x, y, z; } vec3f_t;
 
 typedef struct {
     vec3f_t position, color;
+    float power;
 } light_t;
 
-light_t* make_light(vec3f_t pos, vec3f_t color);
+light_t* make_light(vec3f_t, vec3f_t, float);
 void delete_light(light_t*);
 
 #ifdef __cplusplus

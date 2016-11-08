@@ -226,7 +226,8 @@ int bind_data_to_shaders(object_t* obj, light_t* light) {
     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 
         8*sizeof(float), 0);
 
-    GLint normalAttrib = glGetAttribLocation(obj->shader, "normal");    
+    GLint normalAttrib = glGetAttribLocation(obj->shader, "normal");
+    glEnableVertexAttribArray(normalAttrib);
     glVertexAttribPointer(normalAttrib, 3, GL_FLOAT, GL_FALSE,
         8*sizeof(float), (void*)(3*sizeof(float)));
 
@@ -239,11 +240,28 @@ int bind_data_to_shaders(object_t* obj, light_t* light) {
     GLint uniModel = glGetUniformLocation(obj->shader, "model");
     glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(obj->model));
 
+    // load the material properties
+    GLint uniKa = glGetUniformLocation(obj->shader, "mtl_ka");
+    glUniform3fv(uniKa, 1, glm::value_ptr(obj->ka));
+
+    GLint uniKd = glGetUniformLocation(obj->shader, "mtl_kd");
+    glUniform3fv(uniKd, 1, glm::value_ptr(obj->kd));
+
+    GLint uniKs = glGetUniformLocation(obj->shader, "mtl_ks");
+    glUniform3fv(uniKs, 1, glm::value_ptr(obj->ks));
+
+    GLint uniNs = glGetUniformLocation(obj->shader, "mtl_ns");
+    glUniform1fv(uniNs, 1, &(obj->ns));
+
+    // uniforms about the light source
     GLint uniLightpos = glGetUniformLocation(obj->shader, "lightpos");
-    glUniform3fv(uniLightpos, 3, (const GLfloat*)&(light->position));
+    glUniform3fv(uniLightpos, 1, (const GLfloat*)&(light->position));
 
     GLint uniLightcolor = glGetUniformLocation(obj->shader, "lightcolor");
-    glUniform3fv(uniLightcolor, 3, (const GLfloat*)&(light->color));
+    glUniform3fv(uniLightcolor, 1, (const GLfloat*)&(light->color));
+
+    GLint uniLightpower = glGetUniformLocation(obj->shader, "lightpower");
+    glUniform1fv(uniLightpower, 1, (const GLfloat*)&(light->power));
 
     return 0;
 }

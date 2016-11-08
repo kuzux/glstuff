@@ -19,6 +19,9 @@ out vec3 EyeDirection_cameraspace;
 out vec3 LightDirection_cameraspace;
 out vec3 Normal_cameraspace;
 
+// distance between light and the vertex
+out float Distance;
+
 void main()
 {
     // pass fragment shader parameters
@@ -41,5 +44,7 @@ void main()
 
     // Normal of the the vertex, in camera space
     // Only correct if ModelMatrix does not scale the model ! Use its inverse transpose if not.
-    Normal_cameraspace = ( view * model * vec4(normal, 0)).xyz; 
+    Normal_cameraspace = (view * model * vec4(normal, 1.0)).xyz;
+
+    Distance = distance(Position_worldspace, lightpos);
 }
