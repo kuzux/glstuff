@@ -7,10 +7,10 @@ in vec3 EyeDirection_cameraspace;
 in vec3 LightDirection_cameraspace;
 in vec3 Normal_cameraspace;
 
-in float Distance;
-
 out vec4 outColor;
 
+// in world coordinates
+uniform vec3 lightpos;
 uniform vec3 lightcolor;
 uniform float lightpower;
 
@@ -47,8 +47,11 @@ void main()
     //  - Looking elsewhere -> < 1
     float cosAlpha = clamp(dot(E, R),0, 1);
 
+    // distance between the vertex and the light source
+    float dist = distance(Position_worldspace, lightpos);
+
     vec4 ambient = vec4(mtl_ka, 1.0);
-    vec4 diffuse = texture(tex, Texcoord) * vec4(lightcolor, 1.0) * lightpower / (Distance * Distance);
-    vec4 specular = vec4(mtl_ks, 1.0) * vec4(lightcolor, 1.0) * pow(cosAlpha, mtl_ns) / (Distance * Distance);
+    vec4 diffuse = texture(tex, Texcoord) * vec4(lightcolor, 1.0) * lightpower / (dist * dist);
+    vec4 specular = vec4(mtl_ks, 1.0) * vec4(lightcolor, 1.0) * pow(cosAlpha, mtl_ns) / (dist * dist);
     outColor = ambient + diffuse + specular;
 }
