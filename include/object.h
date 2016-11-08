@@ -10,6 +10,8 @@
 #include <glm/glm.hpp>
 
 #include <objparse.h>
+#include <mtlparse.h>
+#include <light.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,15 +49,21 @@ typedef struct {
     // indexed faces
     GLuint* faces;
     int num_faces;
+
+    // colorss
+    glm::vec3 ka;
+    glm::vec3 kd;
+    glm::vec3 ks;
+    GLfloat ns;
 } object_t;
 
 object_t* make_object();
-int init_from_obj_file(object_t*, obj_file_t*);
+int init_from_obj_file(object_t*, obj_file_t*, mtl_file_t*);
 
 int compile_shaders(object_t*);
 int link_shaders(object_t*);
 int load_texture(object_t*, const char*);
-int bind_data_to_shaders(object_t*);
+int bind_data_to_shaders(object_t*, light_t*);
 
 void object_update(object_t*, SDL_Event, uint64_t);
 

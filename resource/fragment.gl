@@ -2,7 +2,19 @@
 
 in vec2 Texcoord;
 
+in vec3 Position_worldspace;
+in vec3 EyeDirection_cameraspace;
+in vec3 LightDirection_cameraspace;
+in vec3 Normal_cameraspace;
+
 out vec4 outColor;
+
+uniform vec3 lightcolor;
+
+// material properties
+uniform vec3 mtl_ka;
+uniform vec3 mtl_kd;
+uniform vec3 mtl_ks;
 
 uniform sampler2D tex;
 

@@ -94,7 +94,7 @@ object_t* make_object(){
     return res;
 }
 
-int init_from_obj_file(object_t* obj, obj_file_t* objfile) {
+int init_from_obj_file(object_t* obj, obj_file_t* objfile, mtl_file_t* mtlfile) {
     if(!obj) {
         return 1;
     }
@@ -119,6 +119,18 @@ int init_from_obj_file(object_t* obj, obj_file_t* objfile) {
     obj->faces = objfile->faces;
     obj->num_faces = objfile->num_faces;
 
+    if(mtlfile) {
+        obj->ka = glm::vec3(mtlfile->ka.r, mtlfile->ka.g, mtlfile->ka.b);
+        obj->kd = glm::vec3(mtlfile->kd.r, mtlfile->kd.g, mtlfile->kd.b);
+        obj->ks = glm::vec3(mtlfile->ks.r, mtlfile->ks.g, mtlfile->ks.b);
+        obj->ns = mtlfile->ns;
+    } else {
+        obj->ka = glm::vec3(1.0f, 1.0f, 1.0f);
+        obj->kd = glm::vec3(1.0f, 1.0f, 1.0f);
+        obj->ks = glm::vec3(0.0f, 0.0f, 0.0f);
+        obj->ns = 1.0f;
+    }
+
     if(init_buffers(obj)) {
         return 1;
     }
@@ -137,9 +149,6 @@ int init_from_obj_file(object_t* obj, obj_file_t* objfile) {
         }
     }
 
-    if(bind_data_to_shaders(obj)) {
-        return 1;
-    }
 
     return 0;
 }
@@ -210,7 +219,7 @@ int load_texture(object_t* obj, const char* filename) {
     return 0;
 }
 
-int bind_data_to_shaders(object_t* obj) {
+int bind_data_to_shaders(object_t* obj, light_t* light) {
     // specify the shape of the vertex data
     GLint posAttrib = glGetAttribLocation(obj->shader, "position");
     glEnableVertexAttribArray(posAttrib);
@@ -229,6 +238,12 @@ int bind_data_to_shaders(object_t* obj) {
     // load the model transformation matrix
     GLint uniModel = glGetUniformLocation(obj->shader, "model");
     glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(obj->model));
+
+    GLint uniLightpos = glGetUniformLocation(obj->shader, "lightpos");
+    glUniform3fv(uniLightpos, 3, (const GLfloat*)&(light->position));
+
+    GLint uniLightcolor = glGetUniformLocation(obj->shader, "lightcolor");
+    glUniform3fv(uniLightcolor, 3, (const GLfloat*)&(light->color));
 
     return 0;
 }

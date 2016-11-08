@@ -1,5 +1,5 @@
 BINS=target/main
-OBJS=target/main.o target/app.o target/camera.o target/object.o target/objparse.o target/mtlparse.o
+OBJS=target/main.o target/app.o target/camera.o target/object.o target/objparse.o target/mtlparse.o target/light.o
 CFLAGS=-O2 -g -Iinclude
 CPP=g++
 CC=gcc

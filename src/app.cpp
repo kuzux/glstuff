@@ -16,10 +16,13 @@
 
 #include <camera.h>
 #include <object.h>
+#include <light.h>
 #include <objparse.h>
+#include <mtlparse.h>
 
 object_t* obj;
 camera_t* cam;
+light_t* light;
 
 int app_start(){
     glEnable(GL_DEPTH_TEST);
@@ -27,11 +30,15 @@ int app_start(){
     glStencilFunc(GL_GEQUAL, 1, 0xFF);
     glStencilMask(0x00);
 
+    vec3f_t zeros = { 0.0f, 0.0f, 0.0f };
+
     obj = make_object();
     cam = make_camera(
         glm::vec3(2.2f, 2.2f, 2.2f),
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.0f, 0.0f, 1.0f));
+
+    light = make_light(zeros, zeros);
 
     if(!obj) {
         return 1;
@@ -47,7 +54,21 @@ int app_start(){
         return 1;
     }
 
-    if(init_from_obj_file(obj, objfile)) {
+    mtl_file_t* mtlfile = NULL;
+
+    if(objfile->mtl_file) {
+        mtlfile = make_mtl_file(objfile->mtl_file);
+
+        if(parse_mtl_file(mtlfile)) {
+            return 1;
+        }
+    }
+
+    if(init_from_obj_file(obj, objfile, mtlfile)) {
+        return 1;
+    }
+
+    if(bind_data_to_shaders(obj, light)) {
         return 1;
     }
 
