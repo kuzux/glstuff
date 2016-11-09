@@ -330,42 +330,63 @@ mat4_t mat4_multiply(mat4_t m, mat4_t n) {
     return res;
 }
 
-mat4_t look_at(vec3_t pos, vec3_t look, vec3_t up) {
-    vec3_t n = vec3_normalize(vec3_add(pos, vec3_invert(look)));
-    vec3_t u = vec3_normalize(vec3_cross(up, n));
-    vec3_t v = vec3_cross(n, u);
+mat4_t look_at(vec3_t eye, vec3_t center, vec3_t up) {
+    vec3_t f = vec3_normalize(vec3_add(center, vec3_invert(eye)));
+    vec3_t s = vec3_normalize(vec3_cross(f, up));
+    vec3_t u = vec3_cross(s, f);
 
     mat4_t res;
 
-    res.e[0] = u.x;
-    res.e[1] = v.x;
-    res.e[2] = n.x;
+    res.e[0] =  s.x;
+    res.e[1] =  u.x;
+    res.e[2] = -f.x;
     res.e[3] = 0.0f;
 
-    res.e[4] = u.y;
-    res.e[5] = v.y;
-    res.e[6] = n.y;
+    res.e[4] =  s.y;
+    res.e[5] =  u.y;
+    res.e[6] = -f.y;
     res.e[7] = 0.0f;
 
-    res.e[8] = u.z;
-    res.e[9] = v.z;
-    res.e[10] = n.z;
+    res.e[8]  =  s.z;
+    res.e[9]  =  u.z;
+    res.e[10] = -f.z;
     res.e[11] = 0.0f;
 
-    res.e[12] = vec3_dot(vec3_invert(u), pos);
-    res.e[13] = vec3_dot(vec3_invert(v), pos);
-    res.e[14] = vec3_dot(vec3_invert(n), pos);
+    res.e[12] = -vec3_dot(s, eye);
+    res.e[13] = -vec3_dot(u, eye);
+    res.e[14] =  vec3_dot(f, eye);
     res.e[15] = 1.0f;
 
     return res;
 }
 
-mat4_t perspective(float fov, float aspect, float min, float max) {
-    return mat4_unit();
+mat4_t perspective(float fov, float aspect, float near, float far) {
+    mat4_t res = mat4_zero();
+
+    float f = tan(fov/2.0f);
+
+    res.e[0]  =   1 / (aspect * f);
+    res.e[5]  =   1 / f;
+    res.e[10] = - (far + near) / (far - near);
+    res.e[11] = - 1.0f;
+    res.e[14] = - (2.0f * far * near) / (far - near);
+
+    return res;
 }
 
-mat4_t ortographic(vec3_t origin, vec3_t size) {
-    return mat4_unit();
+mat4_t ortographic(float l, float r, float b, float t, float n, float f) {
+    mat4_t res = mat4_zero();
+
+    res.e[0]  =  2.0f/(r-l);
+    res.e[5]  =  2.0f/(t-b);
+    res.e[10] = -2.0f/(f-n);
+    res.e[15] =  1.0f;
+
+    res.e[3]  = -(r+l)/(r-l);
+    res.e[7]  = -(t+b)/(t-n);
+    res.e[11] = -(f+n)/(f-n);
+
+    return res;
 }
 
 mat4_t translate(mat4_t mat, vec3_t delta) {

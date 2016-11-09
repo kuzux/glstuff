@@ -9,6 +9,8 @@
 
 #include <glm/glm.hpp>
 
+#include <geometry.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -19,15 +21,15 @@ extern "C" {
 #define ASPECT 800.0f / 600.0f
 
 typedef struct {
-    glm::vec3 pos;
-    glm::vec3 lookAt;
-    glm::vec3 up;
+    vec3_t pos;
+    vec3_t lookAt;
+    vec3_t up;
 
-    glm::mat4 view;
-    glm::mat4 proj;
+    mat4_t view;
+    mat4_t proj;
 } camera_t;
 
-camera_t* make_camera(glm::vec3, glm::vec3, glm::vec3);
+camera_t* make_camera(vec3_t, vec3_t, vec3_t);
 void delete_camera(camera_t*);
 void update_camera(camera_t*);
 int camera_bind_shader(camera_t*, GLuint);

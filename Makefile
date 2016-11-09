@@ -30,5 +30,13 @@ target/main: $(OBJS)
 	mkdir -p target
 	$(CPP) $(CFLAGS) $(OBJS) -o $@ $(LIBS)
 
+target/test: src/testing.cpp
+	mkdir -p target
+	$(CPP) $(CFLAGS) $< -o $@
+
+test: target/test
+	echo '===========Test Results==========='
+	./target/test
+
 clean:
 	rm target/*

@@ -157,7 +157,7 @@ mat4_t mat4_multiply(mat4_t, mat4_t);
 // projection stuff
 mat4_t look_at(vec3_t, vec3_t, vec3_t);
 mat4_t perspective(float, float, float, float);
-mat4_t ortographic(vec3_t, vec3_t);
+mat4_t ortographic(float, float, float, float, float, float);
 
 // graphical transformations
 mat4_t translate(mat4_t, vec3_t);

@@ -32,9 +32,9 @@ int app_start(){
 
     obj = make_object();
     cam = make_camera(
-        glm::vec3(2.2f, 2.2f, 2.2f),
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(0.0f, 0.0f, 1.0f));
+        make_vec3(2.2f, 2.2f, 2.2f),
+        make_vec3(0.0f, 0.0f, 0.0f),
+        make_vec3(0.0f, 0.0f, 1.0f));
 
     light = make_light(
         make_vec3(2.0f, 2.0f, 10.0f),
