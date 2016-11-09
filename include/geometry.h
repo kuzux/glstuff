@@ -102,6 +102,9 @@ vec2_t vec2_num(float);
 vec3_t vec3_num(float);
 vec4_t vec4_num(float);
 
+vec2_t vec3_xy(vec3_t);
+vec3_t vec4_xyz(vec4_t);
+
 mat2_t mat2_zero();
 mat3_t mat3_zero();
 mat4_t mat4_zero();
@@ -126,9 +129,9 @@ vec2_t vec2_multiply(vec2_t, float);
 vec3_t vec3_multiply(vec3_t, float);
 vec4_t vec4_multiply(vec4_t, float);
 
-float vec2_normalize(vec2_t);
-float vec3_normalize(vec3_t);
-float vec4_normalize(vec4_t);
+vec2_t vec2_normalize(vec2_t);
+vec3_t vec3_normalize(vec3_t);
+vec4_t vec4_normalize(vec4_t);
 
 float vec2_dot(vec2_t, vec2_t);
 float vec3_dot(vec3_t, vec3_t);
@@ -137,9 +140,25 @@ float vec4_dot(vec4_t, vec4_t);
 float vec2_cross(vec2_t, vec2_t);
 vec3_t vec3_cross(vec3_t, vec3_t);
 
+// basic ops
+mat2_t mat2_transpose(mat2_t);
+mat3_t mat3_transpose(mat3_t);
+mat4_t mat4_transpose(mat4_t);
+
+float mat2_det(mat2_t);
+float mat3_det(mat2_t);
+float mat4_det(mat2_t);
+
+mat2_t mat2_multiply(mat2_t, mat2_t);
+mat3_t mat3_multiply(mat3_t, mat3_t);
+mat4_t mat4_multiply(mat4_t, mat4_t);
+
+// projection stuff
 mat4_t look_at(vec3_t, vec3_t, vec3_t);
 mat4_t perspective(float, float, float, float);
+mat4_t ortographic(vec3_t, vec3_t);
 
+// graphical transformations
 mat4_t translate(mat4_t, vec3_t);
 mat4_t rotate(mat4_t, float, vec3_t);
 mat4_t scale(mat4_t, vec3_t);
