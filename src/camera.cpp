@@ -6,6 +6,8 @@
 #include <GL/gl.h>
 #endif
 
+#include <geometry.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -27,7 +29,7 @@ camera_t* make_camera(glm::vec3 pos, glm::vec3 lookAt, glm::vec3 up){
     res->view = glm::lookAt(pos, lookAt, up);
 
     // set up the projection matrix
-    res->proj = glm::perspective(glm::radians(FOV_DEGREES), ASPECT, MINDIST, MAXDIST);
+    res->proj = glm::perspective(deg_to_rad(FOV_DEGREES), ASPECT, MINDIST, MAXDIST);
 
     return res;
 }

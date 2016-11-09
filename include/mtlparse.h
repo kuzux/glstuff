@@ -5,10 +5,12 @@
 extern "C" {
 #endif
 
+#include <geometry.h>
+
 typedef struct {
     const char* filename;
 
-    struct { float r, g, b; } ka, kd, ks;
+    vec3_t ka, kd, ks;
     float ns;
 } mtl_file_t;
 

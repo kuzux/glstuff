@@ -71,9 +71,79 @@ typedef struct {
 } vec4_t;
 #endif
 
+#ifndef MAT2_DEFINED
+#define MAT2_DEFINED
+typedef struct {
+    float e[4];
+} mat2_t;
+#endif
+
+#ifndef MAT3_DEFINED
+#define MAT3_DEFINED
+typedef struct {
+    float e[9];
+} mat3_t;
+#endif
+
+#ifndef MAT4_DEFINED
+#define MAT4_DEFINED
+typedef struct {
+    float e[16];
+} mat4_t;
+#endif
+
 vec2_t make_vec2(float, float);
 vec3_t make_vec3(float, float, float);
 vec4_t make_vec4(float, float, float, float);
+
+float deg_to_rad(float);
+
+vec2_t vec2_num(float);
+vec3_t vec3_num(float);
+vec4_t vec4_num(float);
+
+mat2_t mat2_zero();
+mat3_t mat3_zero();
+mat4_t mat4_zero();
+
+mat2_t mat2_unit();
+mat3_t mat3_unit();
+mat4_t mat4_unit();
+
+float vec2_length(vec2_t);
+float vec3_length(vec3_t);
+float vec4_length(vec4_t);
+
+vec2_t vec2_invert(vec2_t);
+vec3_t vec3_invert(vec3_t);
+vec4_t vec4_invert(vec4_t);
+
+vec2_t vec2_add(vec2_t, vec2_t);
+vec3_t vec3_add(vec3_t, vec3_t);
+vec4_t vec4_add(vec4_t, vec4_t);
+
+vec2_t vec2_multiply(vec2_t, float);
+vec3_t vec3_multiply(vec3_t, float);
+vec4_t vec4_multiply(vec4_t, float);
+
+float vec2_normalize(vec2_t);
+float vec3_normalize(vec3_t);
+float vec4_normalize(vec4_t);
+
+float vec2_dot(vec2_t, vec2_t);
+float vec3_dot(vec3_t, vec3_t);
+float vec4_dot(vec4_t, vec4_t);
+
+float vec2_cross(vec2_t, vec2_t);
+vec3_t vec3_cross(vec3_t, vec3_t);
+
+mat4_t look_at(vec3_t, vec3_t, vec3_t);
+mat4_t perspective(float, float, float, float);
+
+mat4_t translate(mat4_t, vec3_t);
+mat4_t rotate(mat4_t, float, vec3_t);
+mat4_t scale(mat4_t, vec3_t);
+mat4_t skew(mat4_t, vec3_t);
 
 #ifdef __cplusplus
 }
