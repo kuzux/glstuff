@@ -97,6 +97,7 @@ vec3_t make_vec3(float, float, float);
 vec4_t make_vec4(float, float, float, float);
 
 float deg_to_rad(float);
+float clamp(float, float, float);
 
 vec2_t vec2_num(float);
 vec3_t vec3_num(float);

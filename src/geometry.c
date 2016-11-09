@@ -36,6 +36,16 @@ float deg_to_rad(float deg) {
     return M_PI * (deg / 180.0f);
 }
 
+float clamp(float v, float min, float max) {
+    if(v < min) {
+        return min;
+    } else if(v > max) {
+        return max;
+    } else {
+        return v;
+    }
+}
+
 vec2_t vec2_num(float n) {
     return make_vec2(n, n);
 }
@@ -194,39 +204,130 @@ vec3_t vec3_cross(vec3_t a, vec3_t b) {
 }
 
 mat2_t mat2_transpose(mat2_t m) {
+    mat2_t res;
 
+    res.e[0] = m.e[0];
+    res.e[1] = m.e[2];
+
+    res.e[2] = m.e[1];
+    res.e[3] = m.e[3];
+
+    return res;
 }
 
 mat3_t mat3_transpose(mat3_t m) {
+    mat3_t res;
 
+    res.e[0] = m.e[0];
+    res.e[1] = m.e[3];
+    res.e[2] = m.e[6];
+
+    res.e[3] = m.e[1];
+    res.e[4] = m.e[4];
+    res.e[5] = m.e[7];
+
+    res.e[6] = m.e[2];
+    res.e[7] = m.e[5];
+    res.e[8] = m.e[8];
+
+    return res;
 }
 
 mat4_t mat4_transpose(mat4_t m) {
+    mat4_t res;
 
+    res.e[0] = m.e[0];
+    res.e[1] = m.e[4];
+    res.e[2] = m.e[8];
+    res.e[3] = m.e[12];
+
+    res.e[4] = m.e[1];
+    res.e[5] = m.e[5];
+    res.e[6] = m.e[9];
+    res.e[7] = m.e[13];
+
+    res.e[8] = m.e[2];
+    res.e[9] = m.e[6];
+    res.e[10] = m.e[10];
+    res.e[11] = m.e[14];
+    
+    res.e[12] = m.e[3];
+    res.e[13] = m.e[7];
+    res.e[14] = m.e[11];
+    res.e[15] = m.e[15];
+
+    return res;
 }
 
 float mat2_det(mat2_t m) {
-
+    // TODO
+    return 0.0f;
 }
 
 float mat3_det(mat2_t m) {
-
+    // TODO
+    return 0.0f;
 }
 
 float mat4_det(mat2_t m) {
-
+    // TODO
+    return 0.0f;
 }
 
 mat2_t mat2_multiply(mat2_t m, mat2_t n) { 
+    mat2_t res;
 
+    res.e[0] = m.e[0]*n.e[0] + m.e[1]*n.e[2];
+    res.e[1] = m.e[0]*n.e[1] + m.e[1]*n.e[3];
+
+    res.e[2] = m.e[2]*n.e[0] + m.e[3]*n.e[2];
+    res.e[3] = m.e[2]*n.e[1] + m.e[3]*n.e[3];
+
+    return res;
 }
 
 mat3_t mat3_multiply(mat3_t m, mat3_t n) {
+    mat3_t res;
 
+    res.e[0] = m.e[0]*n.e[0] + m.e[1]*n.e[3] + m.e[2]*n.e[6];
+    res.e[1] = m.e[0]*n.e[1] + m.e[1]*n.e[4] + m.e[2]*n.e[7];
+    res.e[2] = m.e[0]*n.e[2] + m.e[1]*n.e[5] + m.e[2]*n.e[8];
+
+    res.e[3] = m.e[3]*n.e[0] + m.e[4]*n.e[3] + m.e[5]*n.e[6];
+    res.e[4] = m.e[3]*n.e[1] + m.e[4]*n.e[4] + m.e[5]*n.e[7];
+    res.e[5] = m.e[3]*n.e[2] + m.e[4]*n.e[5] + m.e[5]*n.e[8];
+
+    res.e[6] = m.e[6]*n.e[0] + m.e[7]*n.e[3] + m.e[8]*n.e[6];
+    res.e[7] = m.e[6]*n.e[1] + m.e[7]*n.e[4] + m.e[8]*n.e[7];
+    res.e[8] = m.e[6]*n.e[2] + m.e[7]*n.e[5] + m.e[8]*n.e[8];
+
+    return res;
 }
 
 mat4_t mat4_multiply(mat4_t m, mat4_t n) {
+    mat4_t res;
 
+    res.e[0]  = m.e[0]*n.e[0]  + m.e[1]*n.e[4]  + m.e[2]*n.e[ 8]  + m.e[3]*n.e[12];
+    res.e[1]  = m.e[0]*n.e[1]  + m.e[1]*n.e[5]  + m.e[2]*n.e[ 9]  + m.e[3]*n.e[13];
+    res.e[2]  = m.e[0]*n.e[2]  + m.e[1]*n.e[6]  + m.e[2]*n.e[10]  + m.e[3]*n.e[14];
+    res.e[3]  = m.e[0]*n.e[3]  + m.e[1]*n.e[7]  + m.e[2]*n.e[11]  + m.e[3]*n.e[15];
+
+    res.e[4]  = m.e[4]*n.e[0]  + m.e[5]*n.e[4]  + m.e[6]*n.e[ 8]  + m.e[7]*n.e[12];
+    res.e[5]  = m.e[4]*n.e[1]  + m.e[5]*n.e[5]  + m.e[6]*n.e[ 9]  + m.e[7]*n.e[13];
+    res.e[6]  = m.e[4]*n.e[2]  + m.e[5]*n.e[6]  + m.e[6]*n.e[10]  + m.e[7]*n.e[14];
+    res.e[7]  = m.e[4]*n.e[3]  + m.e[5]*n.e[7]  + m.e[6]*n.e[11]  + m.e[7]*n.e[15];
+
+    res.e[8]  = m.e[8]*n.e[0]  + m.e[9]*n.e[4]  + m.e[10]*n.e[ 8] + m.e[11]*n.e[12];
+    res.e[9]  = m.e[8]*n.e[1]  + m.e[9]*n.e[5]  + m.e[10]*n.e[ 9] + m.e[11]*n.e[13];
+    res.e[10] = m.e[8]*n.e[2]  + m.e[9]*n.e[6]  + m.e[10]*n.e[10] + m.e[11]*n.e[14];
+    res.e[11] = m.e[8]*n.e[3]  + m.e[9]*n.e[7]  + m.e[10]*n.e[11] + m.e[11]*n.e[15];
+
+    res.e[12] = m.e[12]*n.e[0] + m.e[13]*n.e[4] + m.e[14]*n.e[ 8] + m.e[15]*n.e[12];
+    res.e[13] = m.e[12]*n.e[1] + m.e[13]*n.e[5] + m.e[14]*n.e[ 9] + m.e[15]*n.e[13];
+    res.e[14] = m.e[12]*n.e[2] + m.e[13]*n.e[6] + m.e[14]*n.e[10] + m.e[15]*n.e[14];
+    res.e[15] = m.e[12]*n.e[3] + m.e[13]*n.e[7] + m.e[14]*n.e[11] + m.e[15]*n.e[15];
+
+    return res;
 }
 
 mat4_t look_at(vec3_t pos, vec3_t look, vec3_t up) {
