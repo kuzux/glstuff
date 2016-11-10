@@ -197,7 +197,7 @@ float vec2_cross(vec2_t a, vec2_t b) {
 
 vec3_t vec3_cross(vec3_t a, vec3_t b) {
     float xc = a.y * b.z - b.y * a.z;
-    float yc = a.x * b.z - b.x * a.z;
+    float yc = a.z * b.x - b.z * a.x;
     float zc = a.x * b.y - b.x * a.y;
 
     return make_vec3(xc, yc, zc); 

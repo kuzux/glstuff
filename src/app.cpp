@@ -8,11 +8,11 @@
 #include <GL/gl.h>
 #endif
 
-#include <glm/glm.hpp>
-
 #include <SDL2/SDL.h>
 
 #include <app.h>
+
+#include <geometry.h>
 
 #include <camera.h>
 #include <object.h>

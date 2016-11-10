@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#define VEC_LOAD_GL(v) (const float*)&(v)
+
 #ifndef VEC2_DEFINED
 #define VEC2_DEFINED
 typedef struct {

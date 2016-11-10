@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdio.h>
 
 #ifdef __APPLE__
 #include <OpenGL/gl3.h>
@@ -7,11 +6,9 @@
 #include <GL/gl.h>
 #endif
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include <camera.h>
+
+#include <geometry.h>
 
 camera_t* make_camera(vec3_t pos, vec3_t lookAt, vec3_t up){
     camera_t* res = (camera_t*)malloc(sizeof(camera_t));
@@ -43,10 +40,10 @@ void update_camera(camera_t* cam){
 
 int camera_bind_shader(camera_t* cam, GLuint shader){
     GLint uniView = glGetUniformLocation(shader, "view");
-    glUniformMatrix4fv(uniView, 1, GL_FALSE, (const float*)&(cam->view));
+    glUniformMatrix4fv(uniView, 1, GL_FALSE, VEC_LOAD_GL(cam->view));
 
     GLint uniProj = glGetUniformLocation(shader, "proj");
-    glUniformMatrix4fv(uniProj, 1, GL_FALSE, (const float*)&(cam->proj));
+    glUniformMatrix4fv(uniProj, 1, GL_FALSE, VEC_LOAD_GL(cam->proj));
 
     return 0;
 }

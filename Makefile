@@ -9,6 +9,9 @@ target/mtlparse.o \
 target/light.o \
 target/geometry.o \
 
+TEST_OBJS = target/testing.o \
+target/geometry.o \
+
 CFLAGS=-O2 -g -Iinclude
 CPP=g++
 CC=gcc
@@ -30,9 +33,9 @@ target/main: $(OBJS)
 	mkdir -p target
 	$(CPP) $(CFLAGS) $(OBJS) -o $@ $(LIBS)
 
-target/test: src/testing.cpp
+target/test: $(TEST_OBJS) 
 	mkdir -p target
-	$(CPP) $(CFLAGS) $< -o $@
+	$(CPP) $(CFLAGS) $(TEST_OBJS) -o $@
 
 test: target/test
 	echo '===========Test Results==========='

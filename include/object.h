@@ -9,6 +9,8 @@
 
 #include <glm/glm.hpp>
 
+#include <geometry.h>
+
 #include <objparse.h>
 #include <mtlparse.h>
 #include <light.h>
@@ -50,10 +52,10 @@ typedef struct {
     GLuint* faces;
     int num_faces;
 
-    // colorss
-    glm::vec3 ka;
-    glm::vec3 kd;
-    glm::vec3 ks;
+    // colors
+    vec3_t ka;
+    vec3_t kd;
+    vec3_t ks;
     GLfloat ns;
 } object_t;
 

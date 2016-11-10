@@ -12,6 +12,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <geometry.h>
+
 #include <SDL2/SDL.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -120,14 +122,14 @@ int init_from_obj_file(object_t* obj, obj_file_t* objfile, mtl_file_t* mtlfile) 
     obj->num_faces = objfile->num_faces;
 
     if(mtlfile) {
-        obj->ka = glm::vec3(mtlfile->ka.r, mtlfile->ka.g, mtlfile->ka.b);
-        obj->kd = glm::vec3(mtlfile->kd.r, mtlfile->kd.g, mtlfile->kd.b);
-        obj->ks = glm::vec3(mtlfile->ks.r, mtlfile->ks.g, mtlfile->ks.b);
+        obj->ka = make_vec3(mtlfile->ka.r, mtlfile->ka.g, mtlfile->ka.b);
+        obj->kd = make_vec3(mtlfile->kd.r, mtlfile->kd.g, mtlfile->kd.b);
+        obj->ks = make_vec3(mtlfile->ks.r, mtlfile->ks.g, mtlfile->ks.b);
         obj->ns = mtlfile->ns;
     } else {
-        obj->ka = glm::vec3(1.0f, 1.0f, 1.0f);
-        obj->kd = glm::vec3(1.0f, 1.0f, 1.0f);
-        obj->ks = glm::vec3(0.0f, 0.0f, 0.0f);
+        obj->ka = make_vec3(1.0f, 1.0f, 1.0f);
+        obj->kd = make_vec3(1.0f, 1.0f, 1.0f);
+        obj->ks = make_vec3(0.0f, 0.0f, 0.0f);
         obj->ns = 1.0f;
     }
 
@@ -242,13 +244,13 @@ int bind_data_to_shaders(object_t* obj, light_t* light) {
 
     // load the material properties
     GLint uniKa = glGetUniformLocation(obj->shader, "mtl_ka");
-    glUniform3fv(uniKa, 1, glm::value_ptr(obj->ka));
+    glUniform3fv(uniKa, 1, VEC_LOAD_GL(obj->ka));
 
     GLint uniKd = glGetUniformLocation(obj->shader, "mtl_kd");
-    glUniform3fv(uniKd, 1, glm::value_ptr(obj->kd));
+    glUniform3fv(uniKd, 1, VEC_LOAD_GL(obj->kd));
 
     GLint uniKs = glGetUniformLocation(obj->shader, "mtl_ks");
-    glUniform3fv(uniKs, 1, glm::value_ptr(obj->ks));
+    glUniform3fv(uniKs, 1, VEC_LOAD_GL(obj->ks));
 
     GLint uniNs = glGetUniformLocation(obj->shader, "mtl_ns");
     glUniform1fv(uniNs, 1, &(obj->ns));

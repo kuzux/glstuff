@@ -7,8 +7,6 @@
 #include <GL/gl.h>
 #endif
 
-#include <glm/glm.hpp>
-
 #include <geometry.h>
 
 #ifdef __cplusplus
