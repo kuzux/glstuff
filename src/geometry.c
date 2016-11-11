@@ -203,6 +203,18 @@ vec3_t vec3_cross(vec3_t a, vec3_t b) {
     return make_vec3(xc, yc, zc); 
 }
 
+vec2_t vec2_elementwise_mult(vec2_t a, vec2_t b) {
+    return make_vec2(a.x*b.x, a.y*b.y);
+}
+
+vec3_t vec3_elementwise_mult(vec3_t a, vec3_t b) {
+    return make_vec3(a.x*b.x, a.y*b.y, a.z*b.z);
+}
+
+vec4_t vec4_elementwise_mult(vec4_t a, vec4_t b) {
+    return make_vec4(a.x*b.x, a.y*b.y, a.z*b.z, a.t*b.t);
+}
+
 mat2_t mat2_transpose(mat2_t m) {
     mat2_t res;
 
@@ -330,6 +342,42 @@ mat4_t mat4_multiply(mat4_t m, mat4_t n) {
     return res;
 }
 
+vec2_t mat2_row(mat2_t m, int i) {
+    return make_vec2(m.e[2*i],m.e[2*i+1]);
+}
+
+vec2_t mat3_row(mat3_t m, int i) {
+    return make_vec3(m.e[3*i],m.e[3*i+1],m.e[3*i+2]);
+}
+
+vec2_t mat4_row(mat4_t m, int i) {
+    return make_vec4(m.e[4*i],m.e[4*i+1],m.e[4*i+2],m.e[4*i+3]);
+}
+
+vec2_t mat2_column(mat2_t m, int i) {
+    return make_vec2(m.e[2*0+i],m.e[2*1+i]);
+}
+
+vec2_t mat3_column(mat3_t m, int i) {
+    return make_vec2(m.e[3*0+i],m.e[3*1+i],m.e[3*2+i]);
+}
+
+vec2_t mat4_column(mat4_t m, int i) {
+    return make_vec2(m.e[4*0+i],m.e[4*1+i],m.e[4*2+i],m.e[4*3+i]);
+}
+
+float mat2_at(mat2_t m, int i, int j) {
+    return m.e[2*i+j];
+}
+
+float mat3_at(mat3_t m, int i, int j) {
+    return m.e[3*i+j];
+}
+
+float mat4_at(mat4_t m, int i, int j) {
+    return m.e[4*i+j];
+}
+
 mat4_t look_at(vec3_t eye, vec3_t center, vec3_t up) {
     vec3_t f = vec3_normalize(vec3_add(center, vec3_invert(eye)));
     vec3_t s = vec3_normalize(vec3_cross(f, up));
@@ -390,17 +438,47 @@ mat4_t ortographic(float l, float r, float b, float t, float n, float f) {
 }
 
 mat4_t translate(mat4_t mat, vec3_t delta) {
-    return mat4_unit();
+    mat4_t res = mat4_unit();
+    
+    res.e[3]  = delta.x;
+    res.e[7]  = delta.y;
+    res.e[11] = delta.z;
+
+    return mat4_multiply(res, mat);
 }
 
 mat4_t rotate(mat4_t mat, float angle, vec3_t around) {
-    return mat4_unit();
+    // use the formula at the end of this page
+    // http://inside.mines.edu/fs_home/gmurray/ArbitraryAxisRotation/
+    // replacing a,b,c = 0
+    mat4_t res = mat4_unit();
+
+    vec3_t n = vec3_normalize(around);
+
+    float u = n.u;
+    float v = n.v;
+    float w = n.w;
+
+    float s   = sin(angle);
+    float c   = cos(angle);
+
+
+
+    return mat4_multiply(res, mat);
 }
 
 mat4_t scale(mat4_t mat, vec3_t fac) {
-    return mat4_unit();
+    mat4_t res = mat4_unit();
+
+    res.e[0]  = fac.x;
+    res.e[5]  = fac.y;
+    res.e[10] = fac.z;
+
+    return mat4_multiply(res, mat);
 }
 
-mat4_t skew(mat4_t mat, vec3_t fac) {
-    return mat4_unit();
+mat4_t shear(mat4_t mat, vec3_t fac) {
+    mat4_t res = mat4_unit();
+
+    return mat4_multiply(res, mat);
 }

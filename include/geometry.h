@@ -143,6 +143,10 @@ float vec4_dot(vec4_t, vec4_t);
 float vec2_cross(vec2_t, vec2_t);
 vec3_t vec3_cross(vec3_t, vec3_t);
 
+vec2_t vec2_elementwise_mult(vec2_t, vec2_t);
+vec3_t vec3_elementwise_mult(vec3_t, vec3_t);
+vec4_t vec4_elementwise_mult(vec4_t, vec4_t);
+
 // basic ops
 mat2_t mat2_transpose(mat2_t);
 mat3_t mat3_transpose(mat3_t);
@@ -156,6 +160,18 @@ mat2_t mat2_multiply(mat2_t, mat2_t);
 mat3_t mat3_multiply(mat3_t, mat3_t);
 mat4_t mat4_multiply(mat4_t, mat4_t);
 
+vec2_t mat2_row(mat2_t, int);
+vec2_t mat3_row(mat3_t, int);
+vec2_t mat4_row(mat4_t, int);
+
+vec2_t mat2_column(mat2_t, int);
+vec2_t mat3_column(mat3_t, int);
+vec2_t mat4_column(mat4_t, int);
+
+float mat2_at(mat2_t, int, int);
+float mat3_at(mat3_t, int, int);
+float mat4_at(mat4_t, int, int);
+
 // projection stuff
 mat4_t look_at(vec3_t, vec3_t, vec3_t);
 mat4_t perspective(float, float, float, float);
@@ -165,7 +181,7 @@ mat4_t ortographic(float, float, float, float, float, float);
 mat4_t translate(mat4_t, vec3_t);
 mat4_t rotate(mat4_t, float, vec3_t);
 mat4_t scale(mat4_t, vec3_t);
-mat4_t skew(mat4_t, vec3_t);
+mat4_t shear(mat4_t, vec3_t);
 
 #ifdef __cplusplus
 }
