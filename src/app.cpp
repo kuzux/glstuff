@@ -27,6 +27,7 @@ light_t* light;
 int app_start(){
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_STENCIL_TEST);
+
     glStencilFunc(GL_GEQUAL, 1, 0xFF);
     glStencilMask(0x00);
 

@@ -45,5 +45,8 @@ int camera_bind_shader(camera_t* cam, GLuint shader){
     GLint uniProj = glGetUniformLocation(shader, "proj");
     glUniformMatrix4fv(uniProj, 1, GL_FALSE, VEC_LOAD_GL(cam->proj));
 
+    GLint uniGamma = glGetUniformLocation(shader, "gamma");
+    glUniform1f(uniGamma, GAMMA);
+
     return 0;
 }

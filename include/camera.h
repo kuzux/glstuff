@@ -17,6 +17,7 @@ extern "C" {
 #define MINDIST 1.0f
 #define MAXDIST 10.0f
 #define ASPECT 800.0f / 600.0f
+#define GAMMA 1.5f
 
 typedef struct {
     vec3_t pos;

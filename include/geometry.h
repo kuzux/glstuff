@@ -161,12 +161,12 @@ mat3_t mat3_multiply(mat3_t, mat3_t);
 mat4_t mat4_multiply(mat4_t, mat4_t);
 
 vec2_t mat2_row(mat2_t, int);
-vec2_t mat3_row(mat3_t, int);
-vec2_t mat4_row(mat4_t, int);
+vec3_t mat3_row(mat3_t, int);
+vec4_t mat4_row(mat4_t, int);
 
 vec2_t mat2_column(mat2_t, int);
-vec2_t mat3_column(mat3_t, int);
-vec2_t mat4_column(mat4_t, int);
+vec3_t mat3_column(mat3_t, int);
+vec4_t mat4_column(mat4_t, int);
 
 float mat2_at(mat2_t, int, int);
 float mat3_at(mat3_t, int, int);

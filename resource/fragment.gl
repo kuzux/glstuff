@@ -14,6 +14,8 @@ uniform vec3 lightpos;
 uniform vec3 lightcolor;
 uniform float lightpower;
 
+uniform float gamma;
+
 // material properties
 uniform vec3 mtl_ka;
 uniform vec3 mtl_kd;
@@ -53,5 +55,8 @@ void main()
     vec4 ambient = vec4(mtl_ka, 1.0);
     vec4 diffuse = texture(tex, Texcoord) * vec4(lightcolor, 1.0) * lightpower / (dist * dist);
     vec4 specular = vec4(mtl_ks, 1.0) * vec4(lightcolor, 1.0) * pow(cosAlpha, mtl_ns) / (dist * dist);
+
     outColor = ambient + diffuse + specular;
+
+    outColor.rgb = pow(outColor.rgb, vec3(1.0/gamma));
 }

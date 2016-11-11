@@ -346,11 +346,11 @@ vec2_t mat2_row(mat2_t m, int i) {
     return make_vec2(m.e[2*i],m.e[2*i+1]);
 }
 
-vec2_t mat3_row(mat3_t m, int i) {
+vec3_t mat3_row(mat3_t m, int i) {
     return make_vec3(m.e[3*i],m.e[3*i+1],m.e[3*i+2]);
 }
 
-vec2_t mat4_row(mat4_t m, int i) {
+vec4_t mat4_row(mat4_t m, int i) {
     return make_vec4(m.e[4*i],m.e[4*i+1],m.e[4*i+2],m.e[4*i+3]);
 }
 
@@ -358,12 +358,12 @@ vec2_t mat2_column(mat2_t m, int i) {
     return make_vec2(m.e[2*0+i],m.e[2*1+i]);
 }
 
-vec2_t mat3_column(mat3_t m, int i) {
-    return make_vec2(m.e[3*0+i],m.e[3*1+i],m.e[3*2+i]);
+vec3_t mat3_column(mat3_t m, int i) {
+    return make_vec3(m.e[3*0+i],m.e[3*1+i],m.e[3*2+i]);
 }
 
-vec2_t mat4_column(mat4_t m, int i) {
-    return make_vec2(m.e[4*0+i],m.e[4*1+i],m.e[4*2+i],m.e[4*3+i]);
+vec4_t mat4_column(mat4_t m, int i) {
+    return make_vec4(m.e[4*0+i],m.e[4*1+i],m.e[4*2+i],m.e[4*3+i]);
 }
 
 float mat2_at(mat2_t m, int i, int j) {
