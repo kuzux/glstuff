@@ -21,17 +21,22 @@ int main() {
 
     // set up the projection matrix
     mat4_t proj = perspective(deg_to_rad(FOV_DEGREES), ASPECT, MINDIST, MAXDIST);
-
-    const float* view2 = glm::value_ptr(glm::lookAt(
+    
+    glm::mat4 glmview = glm::lookAt(
         glm::vec3(2.2f, 2.2f, 2.2f),
         glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(0.0f, 0.0f, 1.0f)));
+        glm::vec3(0.0f, 0.0f, 1.0f)); 
 
-    const float* proj2 = glm::value_ptr(glm::perspective(deg_to_rad(FOV_DEGREES), ASPECT, MINDIST, MAXDIST));
+    glm::mat4 glmproj = glm::perspective(deg_to_rad(FOV_DEGREES), ASPECT, MINDIST, MAXDIST);
+
+    mat4_t mul = mat4_multiply(proj,view);
+
+    const float* res = VEC_LOAD_GL(mul);
+    const float* res2 = glm::value_ptr(glmproj * glmview);
 
     for(int i = 0; i < 4; i++) {
         for(int j = 0; j < 4; j++) {
-            printf("%f ", view.e[4*i+j]);
+            printf("%f ", res[4*i+j]);
         }
         printf("\n");
     }
@@ -40,27 +45,10 @@ int main() {
 
     for(int i = 0; i < 4; i++) {
         for(int j = 0; j < 4; j++) {
-            printf("%f ", view2[4*i+j]);
+            printf("%f ", res2[4*i+j]);
         }
         printf("\n");
     }
 
-    printf("\n");
-
-    for(int i = 0; i < 4; i++) {
-        for(int j = 0; j < 4; j++) {
-            printf("%f ", proj.e[4*i+j]);
-        }
-        printf("\n");
-    }
-
-    printf("\n");
-
-    for(int i = 0; i < 4; i++) {
-        for(int j = 0; j < 4; j++) {
-            printf("%f ", proj2[4*i+j]);
-        }
-        printf("\n");
-    }
     return 0;
 }
