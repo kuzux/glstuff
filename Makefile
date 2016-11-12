@@ -12,10 +12,18 @@ target/geometry.o \
 TEST_OBJS = target/testing.o \
 target/geometry.o \
 
-CFLAGS=-O2 -g -Iinclude
+CFLAGS=-O2 -g -Iinclude -Wall -Werror
 CPP=g++
 CC=gcc
-LIBS=-framework OpenGL -lGLEW -lSDL2
+LIBS= -lGLEW -lSDL2
+
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+    LIBS += -lGL
+endif
+ifeq ($(UNAME_S),Darwin)
+    LIBS += -framework OpenGL
+endif
 
 all: $(BINS)
 

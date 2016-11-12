@@ -453,14 +453,14 @@ mat4_t rotate(mat4_t mat, float angle, vec3_t around) {
     // replacing a,b,c = 0
     mat4_t res = mat4_unit();
 
-    vec3_t n = vec3_normalize(around);
+    /*vec3_t n = vec3_normalize(around);
 
     float u = n.u;
     float v = n.v;
     float w = n.w;
 
     float s   = sin(angle);
-    float c   = cos(angle);
+    float c   = cos(angle);*/
 
 
 
