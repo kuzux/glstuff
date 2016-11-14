@@ -8,6 +8,7 @@ target/objparse.o \
 target/mtlparse.o \
 target/light.o \
 target/geometry.o \
+target/scene.o \
 
 TEST_OBJS = target/testing.o \
 target/geometry.o \
@@ -15,7 +16,7 @@ target/geometry.o \
 CFLAGS=-O2 -g -Iinclude -Wall -Werror
 CPP=g++
 CC=gcc
-LIBS= -lGLEW -lSDL2
+LIBS= -lGLEW -lSDL2 -ljansson
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
