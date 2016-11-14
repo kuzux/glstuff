@@ -71,7 +71,12 @@ int main(int argc, char** argv) {
     int running = 1;
     uint64_t ticks = 0;
 
-    if(app_start()) {
+    if(argc < 2) {
+        printf("usage: %s scenefile\n", argv[0]);
+        return 1;
+    }
+
+    if(app_start(argv[1])) {
         return 1;
     }
 

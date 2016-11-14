@@ -1,0 +1,13 @@
+{
+    "name": "test",
+    "version": "0.1-TEST",
+
+    "objects": [
+        {
+            "objfile": "resource/cube.obj", 
+            "vertexShader": "resource/vertex.gl", 
+            "fragmentShader": "resource/fragment.gl",
+            "behavior": "resource/cube.lua"
+        }
+    ]
+}

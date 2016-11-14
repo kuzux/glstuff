@@ -17,6 +17,7 @@
 #include <camera.h>
 #include <object.h>
 #include <light.h>
+#include <scene.h>
 #include <objparse.h>
 #include <mtlparse.h>
 
@@ -24,7 +25,7 @@ object_t* obj;
 camera_t* cam;
 light_t* light;
 
-int app_start(){
+int app_start(const char* scn_file){
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_STENCIL_TEST);
 
@@ -50,35 +51,38 @@ int app_start(){
         return 1;
     }
 
-    obj_file_t* objfile = make_obj_file("resource/cube.obj");
-
-    if(parse_obj_file(objfile)) {
+    scene_t* scene = make_scene(scn_file);
+    if(parse_scene_file(scene)) {
         return 1;
     }
 
-    mtl_file_t* mtlfile = NULL;
+    for(int i=0;i<scene->num_objects; i++){
+        obj_file_t* objfile = scene->objects[i];
 
-    if(objfile->mtl_file) {
-        mtlfile = make_mtl_file(objfile->mtl_file);
+        mtl_file_t* mtlfile = NULL;
 
-        if(parse_mtl_file(mtlfile)) {
+        if(objfile->mtl_file) {
+            mtlfile = make_mtl_file(objfile->mtl_file);
+
+            if(parse_mtl_file(mtlfile)) {
+                return 1;
+            }
+        }
+
+        if(init_from_obj_file(obj, objfile, mtlfile)) {
+            return 1;
+        }
+
+        if(bind_data_to_shaders(obj, light)) {
+            return 1;
+        }
+
+        if(camera_bind_shader(cam, obj->shader)) {
             return 1;
         }
     }
 
-    if(init_from_obj_file(obj, objfile, mtlfile)) {
-        return 1;
-    }
-
-    if(bind_data_to_shaders(obj, light)) {
-        return 1;
-    }
-
-    if(camera_bind_shader(cam, obj->shader)) {
-        return 1;
-    }
-
-    delete_obj_file(objfile);
+    delete_scene(scene);
 
     return 0;
 }

@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-    int app_start();
+    int app_start(const char*);
     int app_clean();
 
     int update(SDL_Event evt, uint64_t ticks);
