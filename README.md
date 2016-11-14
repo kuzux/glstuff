@@ -1,4 +1,4 @@
-## What that is
+### What that is
 Following a bunch of OpenGL tutorials. Nothing fancy.
 
 ### What does it take to build?
