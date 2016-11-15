@@ -33,7 +33,7 @@ int compile_shader(const char* filename, GLenum type, GLuint* res) {
     f = fopen(filename, "r");
 
     if(!f){
-        printf("Error opening shader file. errno %d\n", errno);
+        printf("Error opening shader file %s. errno %d\n", filename, errno);
         return 1;
     }
 
@@ -110,7 +110,7 @@ int init_from_obj_file(object_t* obj, obj_file_t* objfile, mtl_file_t* mtlfile) 
         return 1;
     }
 
-    if(objfile->num_vertices > MAX_VERTICES) {
+    if(objfile->num_faces > MAX_FACES) {
         printf("Too many faces\n");
         return 1;
     }
@@ -137,7 +137,7 @@ int init_from_obj_file(object_t* obj, obj_file_t* objfile, mtl_file_t* mtlfile) 
         return 1;
     }
 
-    if(compile_shaders(obj)) {
+    if(compile_shaders(obj, objfile->vertex_shader, objfile->fragment_shader)) {
         return 1;
     }
     
@@ -155,13 +155,13 @@ int init_from_obj_file(object_t* obj, obj_file_t* objfile, mtl_file_t* mtlfile) 
     return 0;
 }
 
-int compile_shaders(object_t* obj) {
-    if(compile_shader("resource/vertex.gl", GL_VERTEX_SHADER, &obj->vShader)) {
+int compile_shaders(object_t* obj, const char* vshader, const char* fshader) {
+    if(compile_shader(vshader, GL_VERTEX_SHADER, &obj->vShader)) {
         printf("vertex shader compile error\n");
         return 1;
     }
 
-    if(compile_shader("resource/fragment.gl", GL_FRAGMENT_SHADER, &obj->fShader)) {
+    if(compile_shader(fshader, GL_FRAGMENT_SHADER, &obj->fShader)) {
         printf("fragment shader compile error\n");
         return 1;
     }

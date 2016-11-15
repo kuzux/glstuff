@@ -59,7 +59,7 @@ int parse_mtl_file(mtl_file_t* mtl) {
     FILE* f = fopen(mtl->filename, "r");
 
     if(!f) {
-        printf("Error opening file. errno %d\n", errno);
+        printf("Error opening mtl file %s. errno %d\n", mtl->filename, errno);
         return 1;
     }
 
@@ -80,7 +80,8 @@ int parse_mtl_file(mtl_file_t* mtl) {
         fgets(lines[i], 255, f);
 
         if(!lines[i]) {
-            printf("Error reading file. errno %d\n", errno);
+            printf("Error reading mtl file. errno %d\n", errno);
+            return 1;
         }
     }
 

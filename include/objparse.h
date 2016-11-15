@@ -13,8 +13,8 @@ typedef struct {
     const char* texture_file;
     const char* mtl_file;
     
-    const char* vertex_shader;
-    const char* fragment_shader;
+    char* vertex_shader;
+    char* fragment_shader;
 
     float* vertices;
     int num_vertices;

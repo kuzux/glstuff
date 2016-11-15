@@ -52,11 +52,13 @@ int app_start(const char* scn_file){
     }
 
     scene_t* scene = make_scene(scn_file);
+
     if(parse_scene_file(scene)) {
         return 1;
     }
 
     for(int i=0;i<scene->num_objects; i++){
+        printf("%d\n", i);
         obj_file_t* objfile = scene->objects[i];
 
         mtl_file_t* mtlfile = NULL;

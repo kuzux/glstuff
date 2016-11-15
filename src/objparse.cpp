@@ -286,7 +286,7 @@ int parse_obj_file(obj_file_t* obj) {
     FILE* f = fopen(obj->filename, "r");
 
     if(!f) {
-        printf("Error opening file. errno %d\n", errno);
+        printf("Error opening obj file. errno %d\n", errno);
         return 1;
     }
 
@@ -307,7 +307,8 @@ int parse_obj_file(obj_file_t* obj) {
         fgets(lines[i], 255, f);
 
         if(!lines[i]) {
-            printf("Error reading file. errno %d\n", errno);
+            printf("Error reading obj file. errno %d\n", errno);
+            return 1;
         }
     }
 

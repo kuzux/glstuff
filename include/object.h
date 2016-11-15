@@ -62,7 +62,7 @@ typedef struct {
 object_t* make_object();
 int init_from_obj_file(object_t*, obj_file_t*, mtl_file_t*);
 
-int compile_shaders(object_t*);
+int compile_shaders(object_t*, const char*, const char*);
 int link_shaders(object_t*);
 int load_texture(object_t*, const char*);
 int bind_data_to_shaders(object_t*, light_t*);
