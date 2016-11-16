@@ -58,7 +58,6 @@ int app_start(const char* scn_file){
     }
 
     for(int i=0;i<scene->num_objects; i++){
-        printf("%d\n", i);
         obj_file_t* objfile = scene->objects[i];
 
         mtl_file_t* mtlfile = NULL;

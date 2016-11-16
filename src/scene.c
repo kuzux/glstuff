@@ -40,13 +40,11 @@ int parse_scene_file(scene_t* scn) {
     if(!json_is_string(child)) JSON_PARSE_ERROR
     scn->name = (char*)malloc(strlen(json_string_value(child))+1);
     strcpy(scn->name, json_string_value(child));
-    json_decref(child);
 
     child = json_object_get(root, "version");
     if(!json_is_string(child)) JSON_PARSE_ERROR
     scn->version = (char*)malloc(strlen(json_string_value(child))+1);
     strcpy(scn->name, json_string_value(child));
-    json_decref(child);
 
     child = json_object_get(root, "objects");
     if(!json_is_array(child)) JSON_PARSE_ERROR
@@ -63,30 +61,23 @@ int parse_scene_file(scene_t* scn) {
         strcpy(filename, json_string_value(obj_child));
         scn->objects[i] = make_obj_file(filename);
 
-        json_decref(obj_child);
-
         obj_child = json_object_get(elem, "vertexShader");
         scn->objects[i]->vertex_shader = malloc(strlen(json_string_value(obj_child))+1);
         strcpy(scn->objects[i]->vertex_shader, json_string_value(obj_child));
-
-        json_decref(obj_child);
 
         obj_child = json_object_get(elem, "fragmentShader");
         scn->objects[i]->fragment_shader = malloc(strlen(json_string_value(obj_child))+1);
         strcpy(scn->objects[i]->fragment_shader, json_string_value(obj_child));
 
-        json_decref(obj_child);
-
         if(parse_obj_file(scn->objects[i])) {
             return 1;
         }
 
+        json_decref(obj_child);
         json_decref(elem);
     }
 
     json_decref(child);
-
-    //json_decref(root);
 
     fclose(f);
 
