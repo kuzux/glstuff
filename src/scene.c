@@ -72,12 +72,7 @@ int parse_scene_file(scene_t* scn) {
         if(parse_obj_file(scn->objects[i])) {
             return 1;
         }
-
-        json_decref(obj_child);
-        json_decref(elem);
     }
-
-    json_decref(child);
 
     fclose(f);
 

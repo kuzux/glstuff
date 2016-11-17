@@ -319,7 +319,18 @@ mat3_t mat3_multiply(mat3_t m, mat3_t n) {
 mat4_t mat4_multiply(mat4_t m, mat4_t n) {
     mat4_t res;
 
-    res.e[0]  = m.e[0]*n.e[0]  + m.e[1]*n.e[4]  + m.e[2]*n.e[ 8]  + m.e[3]*n.e[12];
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) {
+        int sum = 0;
+        for (int k = 0; k < 4; k++) {
+          sum += m.e[4*i+k]*n.e[4*k+j];
+        }
+ 
+        res.e[4*i+j] = sum;
+      }
+    }
+
+    /*res.e[0]  = m.e[0]*n.e[0]  + m.e[1]*n.e[4]  + m.e[2]*n.e[ 8]  + m.e[3]*n.e[12];
     res.e[1]  = m.e[0]*n.e[1]  + m.e[1]*n.e[5]  + m.e[2]*n.e[ 9]  + m.e[3]*n.e[13];
     res.e[2]  = m.e[0]*n.e[2]  + m.e[1]*n.e[6]  + m.e[2]*n.e[10]  + m.e[3]*n.e[14];
     res.e[3]  = m.e[0]*n.e[3]  + m.e[1]*n.e[7]  + m.e[2]*n.e[11]  + m.e[3]*n.e[15];
@@ -337,7 +348,7 @@ mat4_t mat4_multiply(mat4_t m, mat4_t n) {
     res.e[12] = m.e[12]*n.e[0] + m.e[13]*n.e[4] + m.e[14]*n.e[ 8] + m.e[15]*n.e[12];
     res.e[13] = m.e[12]*n.e[1] + m.e[13]*n.e[5] + m.e[14]*n.e[ 9] + m.e[15]*n.e[13];
     res.e[14] = m.e[12]*n.e[2] + m.e[13]*n.e[6] + m.e[14]*n.e[10] + m.e[15]*n.e[14];
-    res.e[15] = m.e[12]*n.e[3] + m.e[13]*n.e[7] + m.e[14]*n.e[11] + m.e[15]*n.e[15];
+    res.e[15] = m.e[12]*n.e[3] + m.e[13]*n.e[7] + m.e[14]*n.e[11] + m.e[15]*n.e[15];*/
 
     return res;
 }

@@ -9,5 +9,15 @@
             "fragmentShader": "resource/fragment.gl",
             "behavior": "resource/cube.lua"
         }
-    ]
+    ],
+
+    "cameraPos": [
+        [2.2, 2.2, 2.2],
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 1.0]
+    ],
+
+    "lightPos": [ 2.0, 2.0, 10.0 ],
+    "lightColor": [ 1.0, 1.0, 1.0 ], 
+    "lightPower": 60.0
 }
