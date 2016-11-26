@@ -11,6 +11,8 @@
 
 #include <conf.h>
 
+#define FRAME_TIME_MS (1000/FPS)
+
 SDL_Window* win;
 SDL_GLContext* ctx;
 
@@ -36,7 +38,11 @@ int init(){
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-    SDL_GL_SetSwapInterval(1);
+    if(VSYNC) {
+        SDL_GL_SetSwapInterval(1);
+    } else {
+        SDL_GL_SetSwapInterval(0);
+    }
 
     ctx = SDL_GL_CreateContext(win);
 
@@ -83,6 +89,9 @@ int main(int argc, char** argv) {
     while(running) {
         SDL_Event evt;
         int evt_count = 0;
+
+        int start = SDL_GetTicks();
+
         while(SDL_PollEvent(&evt)) {
             evt_count++;
             
@@ -108,6 +117,13 @@ int main(int argc, char** argv) {
 
         if(draw(win, ctx)) {
             running = 0;
+        }
+
+        int diff = SDL_GetTicks() - start;
+        int delay = FRAME_TIME_MS - diff;
+        
+        if (delay > 0) {
+            SDL_Delay(delay);
         }
 
         SDL_GL_SwapWindow(win);
